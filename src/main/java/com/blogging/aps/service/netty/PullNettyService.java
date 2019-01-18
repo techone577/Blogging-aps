@@ -1,4 +1,4 @@
-package com.blogging.aps.service;
+package com.blogging.aps.service.netty;
 
 
 import com.blogging.aps.model.constant.NettyHeader;

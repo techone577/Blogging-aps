@@ -4,6 +4,8 @@ import org.apache.tomcat.util.codec.binary.Base64;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 
+import javax.servlet.ReadListener;
+import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 import java.io.*;
@@ -110,6 +112,14 @@ public class Base64HttpServletRequestWrapper extends HttpServletRequestWrapper {
         return new BufferedReader(isr);
     }
 
+    public ServletInputStream getInputStream() throws IOException{
+        if (null == bytes || bytes.length == 0)
+            return getHttpServletRequest().getInputStream();
+        ByteArrayInputStream bis = new ByteArrayInputStream(bytes);
+        Base64FilterServletInputStream bfis = new Base64FilterServletInputStream(bis);
+        return bfis;
+    }
+
     private void cacheBytes () throws IOException {
         StringBuilder buffer = new StringBuilder();
         BufferedReader reader = this.getHttpServletRequest().getReader();
@@ -122,6 +132,34 @@ public class Base64HttpServletRequestWrapper extends HttpServletRequestWrapper {
             bytes = Base64.decodeBase64(originBytes);
         } else {
             bytes = originBytes;
+        }
+    }
+    class Base64FilterServletInputStream extends ServletInputStream {
+        private InputStream inputStream;
+
+        public Base64FilterServletInputStream(InputStream inputStream){
+            super();
+            this.inputStream = inputStream;
+        }
+
+        @Override
+        public boolean isFinished() {
+            return false;
+        }
+
+        @Override
+        public boolean isReady() {
+            return false;
+        }
+
+        @Override
+        public void setReadListener(ReadListener readListener) {
+            return;
+        }
+
+        @Override
+        public int read() throws IOException {
+            return inputStream.read();
         }
     }
 

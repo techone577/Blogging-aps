@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.blogging.aps.persistence.PostInfoEntityMapper" >
+  <resultMap id="BaseResultMap" type="com.blogging.aps.model.entity.post.PostInfoEntity" >
+    <id column="id" property="id" />
+    <result column="post_id" property="postId" />
+    <result column="member_id" property="memberId" />
+    <result column="title" property="title" />
+    <result column="category" property="category" />
+    <result column="passage_id" property="passageId" />
+    <result column="add_time" property="addTime" />
+    <result column="update_time" property="updateTime" />
+    <result column="del_flag" property="delFlag"  />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, post_id, member_id, title, category, passage_id, add_time, update_time, del_flag
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from post_info
+    where id = #{id}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from post_info
+    where id = #{id}
+  </delete>
+  <insert id="insert" parameterType="com.blogging.aps.model.entity.post.PostInfoEntity" >
+    insert into post_info (id, post_id, member_id, 
+      title, category, passage_id, 
+      add_time, update_time, del_flag
+      )
+    values (#{id}, #{postId}, #{memberId}, 
+      #{title}, #{category}, #{passageId}, 
+      #{addTime}, #{updateTime}, #{delFlag}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.blogging.aps.model.entity.post.PostInfoEntity" >
+    insert into post_info
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="postId != null" >
+        post_id,
+      </if>
+      <if test="memberId != null" >
+        member_id,
+      </if>
+      <if test="title != null" >
+        title,
+      </if>
+      <if test="category != null" >
+        category,
+      </if>
+      <if test="passageId != null" >
+        passage_id,
+      </if>
+      <if test="addTime != null" >
+        add_time,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+      <if test="delFlag != null" >
+        del_flag,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id},
+      </if>
+      <if test="postId != null" >
+        #{postId},
+      </if>
+      <if test="memberId != null" >
+        #{memberId},
+      </if>
+      <if test="title != null" >
+        #{title},
+      </if>
+      <if test="category != null" >
+        #{category},
+      </if>
+      <if test="passageId != null" >
+        #{passageId},
+      </if>
+      <if test="addTime != null" >
+        #{addTime},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime},
+      </if>
+      <if test="delFlag != null" >
+        #{delFlag},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.blogging.aps.model.entity.post.PostInfoEntity" >
+    update post_info
+    <set >
+      <if test="postId != null" >
+        post_id = #{postId},
+      </if>
+      <if test="memberId != null" >
+        member_id = #{memberId},
+      </if>
+      <if test="title != null" >
+        title = #{title},
+      </if>
+      <if test="category != null" >
+        category = #{category},
+      </if>
+      <if test="passageId != null" >
+        passage_id = #{passageId},
+      </if>
+      <if test="addTime != null" >
+        add_time = #{addTime},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime},
+      </if>
+      <if test="delFlag != null" >
+        del_flag = #{delFlag},
+      </if>
+    </set>
+    where id = #{id}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.blogging.aps.model.entity.post.PostInfoEntity" >
+    update post_info
+    set post_id = #{postId},
+      member_id = #{memberId},
+      title = #{title},
+      category = #{category},
+      passage_id = #{passageId},
+      add_time = #{addTime},
+      update_time = #{updateTime},
+      del_flag = #{delFlag}
+    where id = #{id}
+  </update>
+</mapper>

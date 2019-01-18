@@ -1,5 +1,6 @@
-package com.blogging.aps.service;
+package com.blogging.aps.service.netty;
 
+import com.blogging.aps.service.netty.AbstractNettyService;
 import com.blogging.aps.support.strategy.FactoryList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

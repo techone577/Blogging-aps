@@ -98,6 +98,7 @@ public class FrameWorkFilter implements Filter {
         } catch (SocketException ex) {
             log.warn("[FrameWorkFilter] {}", ex.getMessage());
         } catch (Exception ex) {
+            System.out.println(ex);
         } finally {
 
         }

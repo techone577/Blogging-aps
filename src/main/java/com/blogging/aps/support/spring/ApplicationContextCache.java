@@ -5,7 +5,7 @@ import com.blogging.aps.model.constant.PropertiesHolder;
 import com.blogging.aps.model.constant.RestMethod;
 import com.blogging.aps.model.eureka.RegistryInfo;
 import com.blogging.aps.model.eureka.ServiceConfig;
-import com.blogging.aps.service.FactoryListHolder;
+import com.blogging.aps.service.netty.FactoryListHolder;
 import com.blogging.aps.support.annotation.ServiceInfo;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
