@@ -14,8 +14,6 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.springframework.stereotype.Component;
-
-import java.net.URLEncoder;
 import java.util.Iterator;
 
 /**
@@ -28,6 +26,9 @@ public class PostCatchBusiness {
     public Response postCatch (PostCatchReqDTO reqDTO) {
         String url = reqDTO.getUrl() + "/archives";
         String html = htmlCatch(url);
+        if (null == html) {
+            return ResponseBuilder.build(false, "github？？？");
+        }
         decodeHtml(reqDTO.getUrl(), html);
 
         return ResponseBuilder.build(true, "so sad");
@@ -38,10 +39,11 @@ public class PostCatchBusiness {
         Element element = doc.getElementById("posts");
         Elements postList = element.getElementsByClass("post");
         Iterator<Element> pi = postList.iterator();
-        while (pi.hasNext()) {
+        Integer i = 0;
+        while (pi.hasNext() && i++ == 0) {
             Elements el = pi.next().getElementsByClass("post-title-link");
             String href = el.last().attr("href");
-            String url = (domain + href).replaceAll(" ","%20").replaceAll("\\[","%5B").replaceAll("\\]","%5D");
+            String url = (domain + href).replaceAll(" ", "%20").replaceAll("\\[", "%5B").replaceAll("\\]", "%5D");
             decodePost(htmlCatch(url));
             System.out.println(href);
         }
@@ -53,7 +55,6 @@ public class PostCatchBusiness {
         Element element = doc.getElementsByClass("post-body").last();
         String post = HTML2Md.convert(element.toString());
         //i am done with this shit
-        System.out.println(post);
     }
 
     private String htmlCatch (String url) {
