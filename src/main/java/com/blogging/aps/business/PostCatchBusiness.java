@@ -39,8 +39,7 @@ public class PostCatchBusiness {
         Element element = doc.getElementById("posts");
         Elements postList = element.getElementsByClass("post");
         Iterator<Element> pi = postList.iterator();
-        Integer i = 0;
-        while (pi.hasNext() && i++ == 0) {
+        while (pi.hasNext()) {
             Elements el = pi.next().getElementsByClass("post-title-link");
             String href = el.last().attr("href");
             String url = (domain + href).replaceAll(" ", "%20").replaceAll("\\[", "%5B").replaceAll("\\]", "%5D");
@@ -54,6 +53,7 @@ public class PostCatchBusiness {
         Document doc = Jsoup.parse(html);
         Element element = doc.getElementsByClass("post-body").last();
         String post = HTML2Md.convert(element.toString());
+        //insert
         //i am done with this shit
     }
 
