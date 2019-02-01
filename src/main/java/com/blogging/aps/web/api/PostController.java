@@ -89,7 +89,7 @@ public class PostController {
      * 文章拉取
      */
     @RequestMapping(value = "/poatCatch", method = RequestMethod.POST)
-    @ServiceInfo(name = "Blogging.APS.PostController.postUpdate", description = "github pages文章抓取")
+    @ServiceInfo(name = "Blogging.APS.PostController.postCatch", description = "catch test")
     public Response postCatch (@Json PostCatchReqDTO reqDTO) {
         LOG.info("文章拉取入参:{}", JsonUtil.toString(reqDTO));
         Response response = postCatchBusiness.postCatch(reqDTO);

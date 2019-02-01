@@ -138,8 +138,8 @@ public class ApplicationContextCache implements ApplicationContextAware {
                     continue;
                 }
                 sc.setName(sn);
+                list.add(sc);
             }
-            list.add(sc);
         }
         registryInfo.setClientName(clientName);
         registryInfo.setPort(port);
