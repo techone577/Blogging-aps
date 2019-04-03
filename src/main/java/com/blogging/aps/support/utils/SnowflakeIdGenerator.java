@@ -1,5 +1,10 @@
 package com.blogging.aps.support.utils;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.Date;
+
 public class SnowflakeIdGenerator {
     //================================================Algorithm's Parameter=============================================
     // 系统开始时间截 (UTC 2017-06-28 00:00:00)
@@ -41,6 +46,7 @@ public class SnowflakeIdGenerator {
      */
     private long lastTimestamp = -1L;
     //===============================================Constructors=======================================================
+
     /**
      * 构造函数
      *
@@ -57,9 +63,10 @@ public class SnowflakeIdGenerator {
         this.workerId = workerId;
         this.dataCenterId = dataCenterId;
     }
+
     // ==================================================Methods========================================================
     // 线程安全的获得下一个 ID 的方法
-    public synchronized long nextId() {
+    public synchronized String nextId() {
         long timestamp = currentTime();
         //如果当前时间小于上一次ID生成的时间戳: 说明系统时钟回退过 - 这个时候应当抛出异常
         if (timestamp < lastTimestamp) {
@@ -82,11 +89,19 @@ public class SnowflakeIdGenerator {
         //上次生成ID的时间截
         lastTimestamp = timestamp;
         //移位并通过或运算拼到一起组成64位的ID
-        return ((timestamp - startTime) << timestampMoveBits) //
+        long id = ((timestamp - startTime) << timestampMoveBits) //
                 | (dataCenterId << dataCenterIdMoveBits) //
                 | (workerId << workerIdMoveBits) //
                 | sequence;
+
+        Date date = new Date(timestamp);
+        LocalDate localDate = LocalDateTime.ofInstant(date.toInstant(), ZoneId.systemDefault()).toLocalDate();
+        String strE = String.valueOf(localDate.getYear()).substring(2, 4)
+                + (localDate.getMonthValue() < 10 ? ("0" + localDate.getMonthValue()) : localDate.getMonthValue())
+                + String.valueOf(localDate.getDayOfMonth());
+        return String.valueOf(id) + strE;
     }
+
     // 阻塞到下一个毫秒 即 直到获得新的时间戳
     protected long blockTillNextMillis(long lastTimestamp) {
         long timestamp = currentTime();
@@ -95,18 +110,18 @@ public class SnowflakeIdGenerator {
         }
         return timestamp;
     }
+
     // 获得以毫秒为单位的当前时间
     protected long currentTime() {
         return System.currentTimeMillis();
     }
-    //====================================================Test Case=====================================================
-    public static void main(String[] args) {
+
+//    //====================================================Test Case=====================================================
+//    public static void main(String[] args) {
 //        SnowflakeIdGenerator idWorker = new SnowflakeIdGenerator(0, 0);
 //        for (int i = 0; i < 1000; i++) {
-//            long id = idWorker.nextId();
-//            System.out.println(Long.toBinaryString(id));
-//            System.out.println(id);
+//            System.out.println(idWorker.nextId());
+//
 //        }
-        System.out.println(Long.toBinaryString(-1L^(-1L<<5L)));
-    }
+//    }
 }  

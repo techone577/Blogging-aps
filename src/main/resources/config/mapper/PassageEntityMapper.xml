@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.blogging.aps.persistence.PassageEntityMapper" >
+  <resultMap id="BaseResultMap" type="com.blogging.aps.model.entity.post.PassageEntity" >
+    <result column="id" property="id" />
+    <result column="passage_id" property="passageId" />
+    <result column="add_time" property="addTime" />
+    <result column="update_time" property="updateTime" />
+    <result column="del_flag" property="delFlag" />
+  </resultMap>
+  <resultMap id="ResultMapWithBLOBs" type="com.blogging.aps.model.entity.post.PassageEntity" extends="BaseResultMap" >
+    <result column="content" property="content" jdbcType="LONGVARCHAR" />
+  </resultMap>
+  <sql id="Blob_Column_List" >
+    content
+  </sql>
+  <insert id="insert" parameterType="com.blogging.aps.model.entity.post.PassageEntity" >
+    insert into passage (id, passage_id, add_time, 
+      update_time, del_flag, content
+      )
+    values (#{id}, #{passageId}, #{addTime}, 
+      #{updateTime}, #{delFlag}, #{content}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.blogging.aps.model.entity.post.PassageEntity" >
+    insert into passage
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="passageId != null" >
+        passage_id,
+      </if>
+      <if test="addTime != null" >
+        add_time,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+      <if test="delFlag != null" >
+        del_flag,
+      </if>
+      <if test="content != null" >
+        content,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id},
+      </if>
+      <if test="passageId != null" >
+        #{passageId},
+      </if>
+      <if test="addTime != null" >
+        #{addTime},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime},
+      </if>
+      <if test="delFlag != null" >
+        #{delFlag},
+      </if>
+      <if test="content != null" >
+        #{content},
+      </if>
+    </trim>
+  </insert>
+</mapper>

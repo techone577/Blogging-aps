@@ -2,8 +2,8 @@ package com.blogging.aps.model.entity.post;
 
 import java.util.Date;
 
-public class PassageInfoEntity {
-    private Long id;
+public class PassageEntity {
+    private Integer id;
 
     private String passageId;
 
@@ -15,11 +15,11 @@ public class PassageInfoEntity {
 
     private String content;
 
-    public Long getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -47,11 +47,11 @@ public class PassageInfoEntity {
         this.updateTime = updateTime;
     }
 
-    public Integer getDelFlag () {
+    public Integer getDelFlag() {
         return delFlag;
     }
 
-    public void setDelFlag (Integer delFlag) {
+    public void setDelFlag(Integer delFlag) {
         this.delFlag = delFlag;
     }
 

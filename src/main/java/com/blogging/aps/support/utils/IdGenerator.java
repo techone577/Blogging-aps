@@ -16,14 +16,16 @@ public class IdGenerator {
      *
      * @return
      */
-    public static String generatePostId () {
-        return null;
+    public static String generatePostId() {
+
+        return POST_PRE + new SnowflakeIdGenerator(0, 0).nextId();
     }
 
     /**
      * @return
      */
-    public static String generatePassageId () {
-        return null;
+    public static String generatePassageId() {
+
+        return PASSAGE_PRE + new SnowflakeIdGenerator(0, 0).nextId();
     }
 }

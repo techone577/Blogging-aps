@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
 /**
  * @author techoneduan
  * @date 2018/12/14
- *
+ * <p>
  * 缓存应用上下文
  */
 @Component
@@ -49,7 +49,7 @@ public class ApplicationContextCache implements ApplicationContextAware {
 
     //TODO why synchronized?
     @Override
-    public synchronized void setApplicationContext (ApplicationContext applicationContext) throws BeansException {
+    public synchronized void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         applicationContextCache = applicationContext;
         list = new ArrayList<>();
         registryInfo = new RegistryInfo();
@@ -57,27 +57,27 @@ public class ApplicationContextCache implements ApplicationContextAware {
         LOG.info("扫描服务结束...");
     }
 
-    public synchronized static ApplicationContext getApplicationcontext () {
+    public synchronized static ApplicationContext getApplicationcontext() {
         return applicationContextCache;
     }
 
-    public synchronized static List<ServiceConfig> getServiceConfig () {
+    public synchronized static List<ServiceConfig> getServiceConfig() {
         return list;
     }
 
-    public static RegistryInfo getRegistryInfo () {
+    public static RegistryInfo getRegistryInfo() {
         return registryInfo;
     }
 
-    public static FactoryListHolder getFactoryListHolder () {
+    public static FactoryListHolder getFactoryListHolder() {
         return null == applicationContextCache ? null : (FactoryListHolder) applicationContextCache.getBean("factoryListHolder");
     }
 
-    public static PropertiesHolder getPropertiesHolder () {
+    public static PropertiesHolder getPropertiesHolder() {
         return null == applicationContextCache ? null : (PropertiesHolder) applicationContextCache.getBean("propertiesHolder");
     }
 
-    private void scan (ApplicationContext ct, List<ServiceConfig> list) {
+    private void scan(ApplicationContext ct, List<ServiceConfig> list) {
         //TODO controlelr.class
         Map<String, Object> restMap = ct.getBeansWithAnnotation(RestController.class);
         Collection<Object> c = restMap.values();
@@ -86,7 +86,7 @@ public class ApplicationContextCache implements ApplicationContextAware {
         }
     }
 
-    private void getServiceInfoAnnotation (Class<?> cls, List<ServiceConfig> list) {
+    private void getServiceInfoAnnotation(Class<?> cls, List<ServiceConfig> list) {
         if (null == cls || null == list) {
             return;
         }
@@ -112,7 +112,7 @@ public class ApplicationContextCache implements ApplicationContextAware {
                 mm = formatMapping(rm.value()[0]);
             }
             //路由地址
-            sc.setMapping(cm + mm);
+            sc.setMapping("/api" + cm + mm);
             //返回值名
             sc.setReturnValue(m.getReturnType().getName());
             //参数列表
@@ -152,7 +152,7 @@ public class ApplicationContextCache implements ApplicationContextAware {
         registryInfo.setSubscribeServices(BspSubscribeService.subscribeList);
     }
 
-    private String formatMapping (String mapping) {
+    private String formatMapping(String mapping) {
         mapping = mapping.startsWith("/") ? mapping : "/".concat(mapping);
         return mapping.endsWith("/") ? mapping.substring(0, mapping.length() - 1) : mapping;
 

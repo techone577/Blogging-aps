@@ -4,6 +4,7 @@ import com.blogging.aps.business.PostBusiness;
 import com.blogging.aps.business.PostCatchBusiness;
 import com.blogging.aps.model.dto.PostCatchReqDTO;
 import com.blogging.aps.model.entity.Response;
+import com.blogging.aps.model.entity.post.PostAddReqEntity;
 import com.blogging.aps.support.annotation.Json;
 import com.blogging.aps.support.annotation.ServiceInfo;
 import com.blogging.aps.support.utils.JsonUtil;
@@ -72,8 +73,11 @@ public class PostController {
      */
     @RequestMapping(value = "/postAdd", method = RequestMethod.POST)
     @ServiceInfo(name = "Blogging.APS.PostController.postAdd", description = "文章新增")
-    public Response postAdd () {
-        return null;
+    public Response postAdd (@Json PostAddReqEntity entity) {
+        LOG.info("新增文章入参：{}",JsonUtil.toString(entity));
+        Response response = postBusiness.addPost(entity);
+        LOG.info("新增文章出参：{}",JsonUtil.toString(entity));
+        return response;
     }
 
     /**

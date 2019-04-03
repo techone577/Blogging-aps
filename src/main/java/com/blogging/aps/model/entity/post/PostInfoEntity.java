@@ -3,7 +3,7 @@ package com.blogging.aps.model.entity.post;
 import java.util.Date;
 
 public class PostInfoEntity {
-    private Long id;
+    private Integer id;
 
     private String postId;
 
@@ -15,17 +15,19 @@ public class PostInfoEntity {
 
     private String passageId;
 
+    private Integer delFlag;
+
     private Date addTime;
 
     private Date updateTime;
 
-    private Integer delFlag;
+    private String summary;
 
-    public Long getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -69,6 +71,14 @@ public class PostInfoEntity {
         this.passageId = passageId == null ? null : passageId.trim();
     }
 
+    public Integer getDelFlag() {
+        return delFlag;
+    }
+
+    public void setDelFlag(Integer delFlag) {
+        this.delFlag = delFlag;
+    }
+
     public Date getAddTime() {
         return addTime;
     }
@@ -85,11 +95,11 @@ public class PostInfoEntity {
         this.updateTime = updateTime;
     }
 
-    public Integer getDelFlag() {
-        return delFlag;
+    public String getSummary() {
+        return summary;
     }
 
-    public void setDelFlag(Integer delFlag) {
-        this.delFlag = delFlag;
+    public void setSummary(String summary) {
+        this.summary = summary == null ? null : summary.trim();
     }
 }
