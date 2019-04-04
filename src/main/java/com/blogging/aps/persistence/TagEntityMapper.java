@@ -11,4 +11,6 @@ public interface TagEntityMapper {
     int insertSelective(TagEntity record);
 
     List<TagEntity> selectTagByName(@Param("tagName") String name);
+
+    List<TagEntity> selectTagByIdList(@Param("idList") List<Integer> idList);
 }

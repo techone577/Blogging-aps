@@ -106,14 +106,14 @@ public class Base64HttpServletRequestWrapper extends HttpServletRequestWrapper {
     }
 
     public BufferedReader getReader () throws IOException {
-        if (null == bytes || bytes.length == 0)
+        if (null == bytes)
             cacheBytes();
         InputStreamReader isr = new InputStreamReader(new ByteArrayInputStream(bytes), encoding);
         return new BufferedReader(isr);
     }
 
     public ServletInputStream getInputStream() throws IOException{
-        if (null == bytes || bytes.length == 0)
+        if (null == bytes)
             return getHttpServletRequest().getInputStream();
         ByteArrayInputStream bis = new ByteArrayInputStream(bytes);
         Base64FilterServletInputStream bfis = new Base64FilterServletInputStream(bis);

@@ -1,5 +1,6 @@
 package com.blogging.aps.business;
 
+import com.blogging.aps.model.dto.HomePagePostListRespDTO;
 import com.blogging.aps.model.entity.Response;
 import com.blogging.aps.model.entity.post.PassageEntity;
 import com.blogging.aps.model.entity.post.PostInfoEntity;
@@ -8,12 +9,14 @@ import com.blogging.aps.model.entity.post.TagRelationEntity;
 import com.blogging.aps.model.entity.post.PostAddReqEntity;
 import com.blogging.aps.service.TagService;
 import com.blogging.aps.service.post.PostService;
+import com.blogging.aps.support.utils.DateUtils;
 import com.blogging.aps.support.utils.IdGenerator;
 import com.blogging.aps.support.utils.ResponseBuilder;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -35,6 +38,7 @@ public class PostBusiness {
 
     /**
      * 添加新博客
+     *
      * @param entity
      * @return
      */
@@ -51,6 +55,15 @@ public class PostBusiness {
         buildTags(entity.getTags(), postInfoEntity.getPostId());
         return ResponseBuilder.build(true, null);
     }
+
+    public Response homepagePostQuery() {
+        List<PostInfoEntity> postInfoEntities = postService.queryLatestFivePosts();
+        if (postInfoEntities.size() == 0)
+            return ResponseBuilder.build(true, null);
+        List<HomePagePostListRespDTO> respDTOS = buildHomePagePostRespDTO(postInfoEntities);
+        return ResponseBuilder.build(true, respDTOS);
+    }
+
 
     //TODO tag?
 
@@ -116,5 +129,35 @@ public class PostBusiness {
         };
         relationEntity.setTagId(tagId);
         tagService.insertTagRelation(relationEntity);
+    }
+
+    private List<HomePagePostListRespDTO> buildHomePagePostRespDTO(List<PostInfoEntity> postInfoEntities) {
+        List<HomePagePostListRespDTO> respDTOS = new ArrayList<>();
+        for (PostInfoEntity postInfoEntity : postInfoEntities) {
+            HomePagePostListRespDTO respDTO = new HomePagePostListRespDTO() {
+                {
+                    setTitle(postInfoEntity.getTitle());
+                    setSummary(postInfoEntity.getSummary());
+                    setUpdateTime(DateUtils.formatDate(postInfoEntity.getUpdateTime()));
+                }
+            };
+            List<Integer> tagIdList = tagService.queryByPostId(postInfoEntity.getPostId())
+                    .stream().map(item -> item.getTagId()).collect(Collectors.toList());
+            //TODO 可以缓存tag列表
+            if (null == tagIdList || tagIdList.size() == 0) {
+                respDTO.setTagList(new ArrayList<>());
+                respDTOS.add(respDTO);
+                continue;
+            }
+            List<String> tagList = tagService.queryByTagIdList(tagIdList)
+                    .stream().map(item -> item.getTagName()).collect(Collectors.toList());
+            if (null == tagList || tagList.size() == 0) {
+                respDTO.setTagList(new ArrayList<>());
+                respDTOS.add(respDTO);
+            }
+            respDTO.setTagList(tagList);
+            respDTOS.add(respDTO);
+        }
+        return respDTOS;
     }
 }

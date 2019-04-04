@@ -42,12 +42,15 @@ public class PostController {
     }
 
     /**
-     * 文章列表查询
+     * 文章列表查询(按照热度选出最热门的五篇)
      */
-    @RequestMapping(value = "/queryList", method = RequestMethod.POST)
-    @ServiceInfo(name = "Blogging.APS.PostController.queryList", description = "文章列表查询")
+    @RequestMapping(value = "/HomePageListQuery", method = RequestMethod.POST)
+    @ServiceInfo(name = "Blogging.APS.PostController.HomePageListQuery", description = "文章列表查询")
     public Response postListQuery () {
-        return null;
+        LOG.info("首页文章列表查询");
+        Response resp = postBusiness.homepagePostQuery();
+        LOG.info("首页列表查询出参:{}",resp);
+        return resp;
     }
 
     /**
@@ -76,7 +79,7 @@ public class PostController {
     public Response postAdd (@Json PostAddReqEntity entity) {
         LOG.info("新增文章入参：{}",JsonUtil.toString(entity));
         Response response = postBusiness.addPost(entity);
-        LOG.info("新增文章出参：{}",JsonUtil.toString(entity));
+        LOG.info("新增文章出参：{}",response);
         return response;
     }
 

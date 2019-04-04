@@ -20,15 +20,25 @@ public class TagService {
     @Autowired
     private TagRelationEntityMapper tagRelationEntityMapper;
 
-    public List<TagEntity> queryTagByName(String name){
+    public List<TagEntity> queryTagByName(String name) {
         return tagEntityMapper.selectTagByName(name);
     }
 
-    public void insertTag(TagEntity tagEntity){
+    public void insertTag(TagEntity tagEntity) {
         tagEntityMapper.insertSelective(tagEntity);
     }
 
-    public void insertTagRelation(TagRelationEntity tagRelationEntity){
+    public void insertTagRelation(TagRelationEntity tagRelationEntity) {
         tagRelationEntityMapper.insertSelective(tagRelationEntity);
+    }
+
+    public List<TagRelationEntity> queryByPostId(String postId) {
+        List<TagRelationEntity> relationEntities = tagRelationEntityMapper.selectByPostId(postId);
+        return relationEntities;
+
+    }
+
+    public List<TagEntity> queryByTagIdList(List<Integer> tagIdList) {
+        return tagEntityMapper.selectTagByIdList(tagIdList);
     }
 }

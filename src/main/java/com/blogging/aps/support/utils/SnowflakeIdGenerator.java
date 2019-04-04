@@ -98,7 +98,7 @@ public class SnowflakeIdGenerator {
         LocalDate localDate = LocalDateTime.ofInstant(date.toInstant(), ZoneId.systemDefault()).toLocalDate();
         String strE = String.valueOf(localDate.getYear()).substring(2, 4)
                 + (localDate.getMonthValue() < 10 ? ("0" + localDate.getMonthValue()) : localDate.getMonthValue())
-                + String.valueOf(localDate.getDayOfMonth());
+                + (localDate.getDayOfMonth() < 10 ? ("0" + localDate.getDayOfMonth()) : localDate.getDayOfMonth());
         return String.valueOf(id) + strE;
     }
 

@@ -13,6 +13,9 @@
     <result column="update_time"  property="updateTime" />
     <result column="summary"  property="summary" />
   </resultMap>
+  <sql id="Base_Column_List">
+    id, post_id, member_id, title, category, passage_id, del_flag, add_time, update_time, summary
+  </sql>
   <insert id="insert" parameterType="com.blogging.aps.model.entity.post.PostInfoEntity">
     insert into post_info (id, post_id, member_id, 
       title, category, passage_id, 
@@ -90,4 +93,14 @@
       </if>
     </trim>
   </insert>
+
+  <select id="selectLatestFivePosts" resultMap="BaseResultMap">
+    SELECT
+    <include refid="Base_Column_List"/>
+    FROM post_info
+    WHERE
+    del_flag = 0
+    ORDER BY  update_time
+    limit 5
+  </select>
 </mapper>

@@ -64,4 +64,20 @@
     AND
     tag_name = #{tagName}
   </select>
+
+  <select id="selectTagByIdList" resultMap="BaseResultMap">
+    SELECT
+    <include refid="Base_Column_List"/>
+    FROM tag
+    WHERE
+    del_flag = 0
+    <if test="idList != null">
+      AND
+      id in
+      <foreach collection="idList" item="item" open="(" close=")"
+               separator=",">
+        #{item}
+      </foreach>
+    </if>
+  </select>
 </mapper>

@@ -9,6 +9,9 @@
     <result column="add_time" property="addTime" />
     <result column="update_time" property="updateTime" />
   </resultMap>
+  <sql id="Base_Column_List">
+    id, tag_id, post_id, del_flag, add_time, update_time
+  </sql>
   <insert id="insert" parameterType="com.blogging.aps.model.entity.post.TagRelationEntity" >
     insert into tag_relation (id, tag_id, post_id, 
       del_flag, add_time, update_time
@@ -60,4 +63,14 @@
       </if>
     </trim>
   </insert>
+
+  <select id="selectByPostId" resultMap="BaseResultMap" parameterType="java.lang.String">
+    SELECT
+    <include refid="Base_Column_List"/>
+    FROM tag_relation
+    WHERE
+    del_flag = 0
+    AND
+    post_id = #{postId}
+  </select>
 </mapper>

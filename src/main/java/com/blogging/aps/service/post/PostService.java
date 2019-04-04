@@ -8,6 +8,8 @@ import com.blogging.aps.persistence.TagEntityMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
  * @author techoneduan
  * @date 2019/1/18
@@ -32,5 +34,10 @@ public class PostService {
     //passage id 根据时间自生成
     public void insertPassgae(PassageEntity passageEntity) {
         passageEntityMapper.insertSelective(passageEntity);
+    }
+
+    //查询最新的五篇文章信息
+    public List<PostInfoEntity> queryLatestFivePosts(){
+        return postInfoEntityMapper.selectLatestFivePosts();
     }
 }
