@@ -10,6 +10,8 @@ public class IdGenerator {
 
     private static final String PASSAGE_PRE = "PA";
 
+    private static final String IMAGE_PRE = "IM";
+
 
     /**
      * post id生成
@@ -27,5 +29,9 @@ public class IdGenerator {
     public static String generatePassageId() {
 
         return PASSAGE_PRE + new SnowflakeIdGenerator(0, 0).nextId();
+    }
+
+    public static String generateImageId() {
+        return IMAGE_PRE + new SnowflakeIdGenerator(0, 0).nextId();
     }
 }

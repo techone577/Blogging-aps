@@ -49,7 +49,7 @@ public class PostController {
     public Response postListQuery () {
         LOG.info("首页文章列表查询");
         Response resp = postBusiness.homepagePostQuery();
-        LOG.info("首页列表查询出参:{}",resp);
+        LOG.info("首页列表查询出参:{}", JsonUtil.toString(resp));
         return resp;
     }
 
@@ -79,7 +79,7 @@ public class PostController {
     public Response postAdd (@Json PostAddReqEntity entity) {
         LOG.info("新增文章入参：{}",JsonUtil.toString(entity));
         Response response = postBusiness.addPost(entity);
-        LOG.info("新增文章出参：{}",response);
+        LOG.info("新增文章出参：{}", JsonUtil.toString(response));
         return response;
     }
 

@@ -3,6 +3,10 @@ package com.blogging.aps.support.utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.Base64Utils;
+import org.springframework.web.multipart.MultipartFile;
+import sun.misc.BASE64Decoder;
+
+import java.io.IOException;
 
 /**
  * @author techoneduan
@@ -52,5 +56,23 @@ public class Base64Util {
             LOG.info("Base64 url-safe解码异常:{}", e);
         }
         return decodeStr;
+    }
+
+
+    public static MultipartFile base64ToMultipart(String base64, String originalName) {
+        try {
+            BASE64Decoder decoder = new BASE64Decoder();
+            byte[] b = new byte[0];
+            b = decoder.decodeBuffer(base64);
+            for (int i = 0; i < b.length; ++i) {
+                if (b[i] < 0) {
+                    b[i] += 256;
+                }
+            }
+            return new BASE64DecodedMultipartFile(b, originalName);
+        } catch (IOException e) {
+            LOG.info("base64转 multipartfile 失败:{}", e);
+        }
+        return null;
     }
 }
