@@ -47,9 +47,9 @@ public class ServiceClient {
     @Autowired
     private RedisUtil redisUtil;
 
-    public Response call (String serviceName, String params) {
+    public Response call(String serviceName, String params) {
         String response = excuteCall(serviceName, params);
-        return ResponseBuilder.build(true, response);
+        return ResponseBuilder.buildResult(response);
     }
 
     private String excuteCall (String serviceName, String params) {

@@ -8,6 +8,7 @@ import com.blogging.aps.persistence.TagEntityMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -37,7 +38,30 @@ public class PostService {
     }
 
     //查询最新的五篇文章信息
-    public List<PostInfoEntity> queryLatestFivePosts(){
+    public List<PostInfoEntity> queryLatestFivePosts() {
         return postInfoEntityMapper.selectLatestFivePosts();
+    }
+
+    public PostInfoEntity queryPostByPostId(String postId) {
+        return postInfoEntityMapper.selectPostByPostId(postId);
+    }
+
+
+    public PassageEntity queryPassageByPassageId(String passageId) {
+        return passageEntityMapper.selectPassageByPassageId(passageId);
+    }
+
+    /**
+     * 查询上一篇文章
+     */
+    public PostInfoEntity queryPreviousPost(Date addtime,String postId){
+        return postInfoEntityMapper.selectPreviousPost(addtime,postId);
+    }
+
+    /**
+     * 查询下一篇文章
+     */
+    public PostInfoEntity queryNextPost(Date addtime,String postId){
+        return postInfoEntityMapper.selectNextPost(addtime,postId);
     }
 }

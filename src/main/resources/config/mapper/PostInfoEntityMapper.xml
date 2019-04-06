@@ -100,7 +100,44 @@
     FROM post_info
     WHERE
     del_flag = 0
-    ORDER BY  update_time
+    ORDER BY  update_time DESC
     limit 5
+  </select>
+
+  <select id="selectPostByPostId" resultMap="BaseResultMap" parameterType="java.lang.String">
+    SELECT
+    <include refid="Base_Column_List"/>
+    FROM post_info
+    WHERE
+    del_flag = 0
+    AND
+    post_id = #{postId}
+  </select>
+
+  <select id="selectPreviousPost" resultMap="BaseResultMap">
+    SELECT
+    <include refid="Base_Column_List"/>
+    FROM post_info
+    WHERE
+    del_flag = 0
+    AND
+    post_id not in (#{postId})
+    AND
+    add_time &lt; #{addTime}
+    ORDER BY add_time DESC
+    limit 1
+  </select>
+
+  <select id="selectNextPost" resultMap="BaseResultMap">
+    SELECT
+    <include refid="Base_Column_List"/>
+    FROM post_info
+    WHERE
+    del_flag = 0
+    AND
+    post_id not in (#{postId})
+    AND
+    add_time &gt; #{addTime}
+    limit 1
   </select>
 </mapper>

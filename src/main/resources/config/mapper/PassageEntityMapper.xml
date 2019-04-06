@@ -65,4 +65,13 @@
       </if>
     </trim>
   </insert>
+  <select id="selectPassageByPassageId" resultMap="ResultMapWithBLOBs" parameterType="java.lang.String">
+    SELECT
+    <include refid="Blob_Column_List"/>
+    FROM passage
+    WHERE
+    del_flag = 0
+    AND
+    passage_id = #{passageId}
+  </select>
 </mapper>

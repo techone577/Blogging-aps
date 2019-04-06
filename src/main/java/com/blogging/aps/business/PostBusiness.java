@@ -1,6 +1,9 @@
 package com.blogging.aps.business;
 
+import com.blogging.aps.model.dto.BlogQueryRespDTO;
 import com.blogging.aps.model.dto.HomePagePostListRespDTO;
+import com.blogging.aps.model.dto.PostInfoDTO;
+import com.blogging.aps.model.dto.PostQueryReqDTO;
 import com.blogging.aps.model.entity.Response;
 import com.blogging.aps.model.entity.post.PassageEntity;
 import com.blogging.aps.model.entity.post.PostInfoEntity;
@@ -11,8 +14,11 @@ import com.blogging.aps.service.TagService;
 import com.blogging.aps.service.post.PostService;
 import com.blogging.aps.support.utils.DateUtils;
 import com.blogging.aps.support.utils.IdGenerator;
+import com.blogging.aps.support.utils.MarkDownUtils;
 import com.blogging.aps.support.utils.ResponseBuilder;
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -28,6 +34,8 @@ import java.util.stream.Collectors;
 
 @Component
 public class PostBusiness {
+
+    private static final Logger LOG = LoggerFactory.getLogger(PostBusiness.class);
 
     @Autowired
     private PostService postService;
@@ -56,12 +64,63 @@ public class PostBusiness {
         return ResponseBuilder.build(true, null);
     }
 
+    /**
+     * 首页文章查询
+     * @return
+     */
     public Response homepagePostQuery() {
         List<PostInfoEntity> postInfoEntities = postService.queryLatestFivePosts();
         if (postInfoEntities.size() == 0)
             return ResponseBuilder.build(true, null);
         List<HomePagePostListRespDTO> respDTOS = buildHomePagePostRespDTO(postInfoEntities);
         return ResponseBuilder.build(true, respDTOS);
+    }
+
+    /**
+     * 查询博客展示信息
+     * @param reqDTO
+     * @return
+     */
+    public Response queryBlog(PostQueryReqDTO reqDTO){
+        PostInfoEntity postInfoEntity = postService.queryPostByPostId(reqDTO.getPostId());
+        if (null == postInfoEntity)
+            return ResponseBuilder.build(true, "文章为空");
+        PassageEntity passageEntity = postService.queryPassageByPassageId(postInfoEntity.getPassageId());
+        String htmlContent = MarkDownUtils.markDownToHtml(passageEntity.getContent());
+
+        PostInfoEntity previous = postService.queryPreviousPost(postInfoEntity.getAddTime(), reqDTO.getPostId());
+        PostInfoEntity next = postService.queryNextPost(postInfoEntity.getAddTime(), reqDTO.getPostId());
+
+        PostInfoDTO previousDTO = null, nextDTO = null;
+        if (null != previous) {
+            previousDTO = new PostInfoDTO() {
+                {
+                    setPostId(previous.getPostId());
+                    setTitle(previous.getTitle());
+                }
+            };
+        }
+        if (null != next) {
+            nextDTO = new PostInfoDTO() {
+                {
+                    setPostId(next.getPostId());
+                    setTitle(next.getTitle());
+                }
+            };
+        }
+        List<String> tags = getPostTags(reqDTO.getPostId());
+        BlogQueryRespDTO respDTO = new BlogQueryRespDTO() {
+            {
+                setPostId(reqDTO.getPostId());
+                setTitle(postInfoEntity.getTitle());
+                setHtmlContent(htmlContent);
+                setAddTime(DateUtils.formatDate(postInfoEntity.getAddTime()));
+                setTagList(tags);
+            }
+        };
+        respDTO.setPreviousPost(previousDTO);
+        respDTO.setNextPost(nextDTO);
+        return ResponseBuilder.build(true, respDTO);
     }
 
 
@@ -141,16 +200,8 @@ public class PostBusiness {
                     setUpdateTime(DateUtils.formatDate(postInfoEntity.getUpdateTime()));
                 }
             };
-            List<Integer> tagIdList = tagService.queryByPostId(postInfoEntity.getPostId())
-                    .stream().map(item -> item.getTagId()).collect(Collectors.toList());
+            List<String> tagList  =getPostTags(postInfoEntity.getPostId());
             //TODO 可以缓存tag列表
-            if (null == tagIdList || tagIdList.size() == 0) {
-                respDTO.setTagList(new ArrayList<>());
-                respDTOS.add(respDTO);
-                continue;
-            }
-            List<String> tagList = tagService.queryByTagIdList(tagIdList)
-                    .stream().map(item -> item.getTagName()).collect(Collectors.toList());
             if (null == tagList || tagList.size() == 0) {
                 respDTO.setTagList(new ArrayList<>());
                 respDTOS.add(respDTO);
@@ -159,5 +210,33 @@ public class PostBusiness {
             respDTOS.add(respDTO);
         }
         return respDTOS;
+    }
+
+    private List<String> getPostTags(String postId) {
+
+        List<Integer> tagIdList = tagService.queryByPostId(postId)
+                .stream().map(item -> item.getTagId()).collect(Collectors.toList());
+        if (null == tagIdList || tagIdList.size() == 0)
+            return null;
+        List<String> tagList = tagService.queryByTagIdList(tagIdList)
+                .stream().map(item -> item.getTagName()).collect(Collectors.toList());
+        return tagList;
+    }
+
+    /**
+     * 查询文章md格式
+     */
+
+    public Response queryMDPost(PostQueryReqDTO reqDTO) {
+        String postId = reqDTO.getPostId();
+        PostInfoEntity postInfoEntity = postService.queryPostByPostId(postId);
+        if (null == postInfoEntity)
+            return ResponseBuilder.build(true,"文章为空");
+
+        PassageEntity passageEntity = postService.queryPassageByPassageId(postInfoEntity.getPassageId());
+        if (null == passageEntity)
+            return ResponseBuilder.build(true,"文章为空");
+
+        return ResponseBuilder.build(true,passageEntity.getContent());
     }
 }
