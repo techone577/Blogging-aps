@@ -1,9 +1,6 @@
 package com.blogging.aps.business;
 
-import com.blogging.aps.model.dto.BlogQueryRespDTO;
-import com.blogging.aps.model.dto.HomePagePostListRespDTO;
-import com.blogging.aps.model.dto.PostInfoDTO;
-import com.blogging.aps.model.dto.PostQueryReqDTO;
+import com.blogging.aps.model.dto.*;
 import com.blogging.aps.model.entity.Response;
 import com.blogging.aps.model.entity.post.PassageEntity;
 import com.blogging.aps.model.entity.post.PostInfoEntity;
@@ -123,6 +120,18 @@ public class PostBusiness {
         return ResponseBuilder.build(true, respDTO);
     }
 
+    /**
+     * 分页查询博客列表
+     * @param queryDTO
+     * @return
+     */
+    public Response postPagingQuery(PostPagingQueryDTO queryDTO){
+        if(null == queryDTO)
+            return ResponseBuilder.build(true,"分页查询条件为空");
+        List<PostInfoEntity> entities = postService.queryPostListByPaging(queryDTO);
+        List<HomePagePostListRespDTO> respDTOS = buildHomePagePostRespDTO(entities);
+        return ResponseBuilder.build(true,respDTOS);
+    }
 
     //TODO tag?
 
@@ -195,6 +204,7 @@ public class PostBusiness {
         for (PostInfoEntity postInfoEntity : postInfoEntities) {
             HomePagePostListRespDTO respDTO = new HomePagePostListRespDTO() {
                 {
+                    setPostId(postInfoEntity.getPostId());
                     setTitle(postInfoEntity.getTitle());
                     setSummary(postInfoEntity.getSummary());
                     setUpdateTime(DateUtils.formatDate(postInfoEntity.getUpdateTime()));

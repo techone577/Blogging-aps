@@ -3,6 +3,7 @@ package com.blogging.aps.web.api;
 import com.blogging.aps.business.PostBusiness;
 import com.blogging.aps.business.PostCatchBusiness;
 import com.blogging.aps.model.dto.PostCatchReqDTO;
+import com.blogging.aps.model.dto.PostPagingQueryDTO;
 import com.blogging.aps.model.dto.PostQueryReqDTO;
 import com.blogging.aps.model.entity.Response;
 import com.blogging.aps.model.entity.post.PostAddReqEntity;
@@ -54,6 +55,18 @@ public class PostController {
         LOG.info("首页文章列表查询");
         Response resp = postBusiness.homepagePostQuery();
         LOG.info("首页列表查询出参:{}", JsonUtil.toString(resp));
+        return resp;
+    }
+
+    /**
+     * 文章列表查询(分页)
+     */
+    @RequestMapping(value = "/postListPagingQuery", method = RequestMethod.POST)
+    @ServiceInfo(name = "Blogging.APS.PostController.postListPagingQuery", description = "文章列表查询")
+    public Response postListPaging (@Json PostPagingQueryDTO queryDTO) {
+        LOG.info("文章列表分页查询入参:{}",JsonUtil.toString(queryDTO));
+        Response resp = postBusiness.postPagingQuery(queryDTO);
+        LOG.info("文章列表分页查询出参:{}", JsonUtil.toString(resp));
         return resp;
     }
 

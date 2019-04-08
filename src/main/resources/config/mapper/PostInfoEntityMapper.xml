@@ -140,4 +140,16 @@
     add_time &gt; #{addTime}
     limit 1
   </select>
+
+  <select id="selectPostListByPaging" resultMap="BaseResultMap" parameterType="com.blogging.aps.model.dto.PostPagingQueryDTO">
+    SELECT
+    <include refid="Base_Column_List"/>
+    FROM post_info
+    WHERE
+    del_flag = 0
+    AND
+    id &lt; #{lastMinId}
+    ORDER BY id DESC
+    limit #{pageSize}
+  </select>
 </mapper>

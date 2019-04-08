@@ -1,6 +1,7 @@
 package com.blogging.aps.persistence;
 
 
+import com.blogging.aps.model.dto.PostPagingQueryDTO;
 import com.blogging.aps.model.entity.post.PostInfoEntity;
 import org.apache.ibatis.annotations.Param;
 
@@ -19,4 +20,6 @@ public interface PostInfoEntityMapper {
     PostInfoEntity selectPreviousPost(@Param("addTime")Date addTime,@Param("postId")String postId);
 
     PostInfoEntity selectNextPost(@Param("addTime")Date addTime,@Param("postId")String postId);
+
+    List<PostInfoEntity> selectPostListByPaging(PostPagingQueryDTO queryDTO);
 }
