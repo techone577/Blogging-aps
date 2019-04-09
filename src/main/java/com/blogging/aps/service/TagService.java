@@ -1,6 +1,7 @@
 package com.blogging.aps.service;
 
 
+import com.blogging.aps.model.dto.TagAmountDTO;
 import com.blogging.aps.model.entity.post.TagEntity;
 import com.blogging.aps.model.entity.post.TagRelationEntity;
 import com.blogging.aps.persistence.TagEntityMapper;
@@ -40,5 +41,13 @@ public class TagService {
 
     public List<TagEntity> queryByTagIdList(List<Integer> tagIdList) {
         return tagEntityMapper.selectTagByIdList(tagIdList);
+    }
+
+    public List<TagAmountDTO> queryTagAmount(){
+        return tagRelationEntityMapper.selectTagAmount();
+    }
+
+    public List<TagRelationEntity> queryTagReLationByTagId(Integer tagId){
+        return tagRelationEntityMapper.selectByTagId(tagId);
     }
 }

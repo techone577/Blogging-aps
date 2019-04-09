@@ -2,6 +2,7 @@ package com.blogging.aps.web.api;
 
 import com.blogging.aps.business.PostBusiness;
 import com.blogging.aps.business.PostCatchBusiness;
+import com.blogging.aps.business.manage.AbstractPostListQueryBusiness;
 import com.blogging.aps.model.dto.PostCatchReqDTO;
 import com.blogging.aps.model.dto.PostPagingQueryDTO;
 import com.blogging.aps.model.dto.PostQueryReqDTO;
@@ -9,6 +10,7 @@ import com.blogging.aps.model.entity.Response;
 import com.blogging.aps.model.entity.post.PostAddReqEntity;
 import com.blogging.aps.support.annotation.Json;
 import com.blogging.aps.support.annotation.ServiceInfo;
+import com.blogging.aps.support.strategy.FactoryList;
 import com.blogging.aps.support.utils.JsonUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,6 +36,9 @@ public class PostController {
     @Autowired
     private PostCatchBusiness postCatchBusiness;
 
+    @Autowired
+    private FactoryList<AbstractPostListQueryBusiness, String> postListQueryBusiness;
+
     /**
      * 文章查询
      */
@@ -46,17 +51,6 @@ public class PostController {
         return resp;
     }
 
-    /**
-     * 文章列表查询(按照热度选出最热门的五篇)
-     */
-    @RequestMapping(value = "/HomePageListQuery", method = RequestMethod.POST)
-    @ServiceInfo(name = "Blogging.APS.PostController.HomePageListQuery", description = "文章列表查询")
-    public Response postListQuery () {
-        LOG.info("首页文章列表查询");
-        Response resp = postBusiness.homepagePostQuery();
-        LOG.info("首页列表查询出参:{}", JsonUtil.toString(resp));
-        return resp;
-    }
 
     /**
      * 文章列表查询(分页)
@@ -65,7 +59,7 @@ public class PostController {
     @ServiceInfo(name = "Blogging.APS.PostController.postListPagingQuery", description = "文章列表查询")
     public Response postListPaging (@Json PostPagingQueryDTO queryDTO) {
         LOG.info("文章列表分页查询入参:{}",JsonUtil.toString(queryDTO));
-        Response resp = postBusiness.postPagingQuery(queryDTO);
+        Response resp = postListQueryBusiness.getBean(queryDTO.getType()).queryPostList(queryDTO);
         LOG.info("文章列表分页查询出参:{}", JsonUtil.toString(resp));
         return resp;
     }
@@ -115,7 +109,7 @@ public class PostController {
     /**
      * 文章拉取
      */
-    @RequestMapping(value = "/poatCatch", method = RequestMethod.POST)
+    @RequestMapping(value = "/postCatch", method = RequestMethod.POST)
     @ServiceInfo(name = "Blogging.APS.PostController.postCatch", description = "catch test")
     public Response postCatch (@Json PostCatchReqDTO reqDTO) {
         LOG.info("文章拉取入参:{}", JsonUtil.toString(reqDTO));

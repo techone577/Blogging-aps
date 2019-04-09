@@ -9,8 +9,15 @@
     <result column="add_time" property="addTime" />
     <result column="update_time" property="updateTime" />
   </resultMap>
+  <resultMap id="TagAmountResultMap" type="com.blogging.aps.model.dto.TagAmountDTO" >
+    <result column="tag_id" property="tagId" />
+    <result column="amount" property="amount"/>
+  </resultMap>
   <sql id="Base_Column_List">
     id, tag_id, post_id, del_flag, add_time, update_time
+  </sql>
+  <sql id="Amount_Statistic_List">
+    tag_id, count(*) as amount
   </sql>
   <insert id="insert" parameterType="com.blogging.aps.model.entity.post.TagRelationEntity" >
     insert into tag_relation (id, tag_id, post_id, 
@@ -72,5 +79,25 @@
     del_flag = 0
     AND
     post_id = #{postId}
+  </select>
+
+  <select id="selectTagAmount" resultMap="TagAmountResultMap">
+    SELECT
+    <include refid="Amount_Statistic_List"/>
+    FROM tag_relation
+    WHERE
+    del_flag = 0
+    GROUP BY tag_id
+    ORDER BY amount desc limit 20
+  </select>
+
+  <select id="selectByTagId" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+    SELECT
+    <include refid="Base_Column_List"/>
+    FROM tag_relation
+    WHERE
+    del_flag = 0
+    AND
+    tag_id = #{tagId}
   </select>
 </mapper>

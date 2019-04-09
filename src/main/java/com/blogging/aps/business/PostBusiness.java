@@ -20,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -69,8 +70,29 @@ public class PostBusiness {
         List<PostInfoEntity> postInfoEntities = postService.queryLatestFivePosts();
         if (postInfoEntities.size() == 0)
             return ResponseBuilder.build(true, null);
-        List<HomePagePostListRespDTO> respDTOS = buildHomePagePostRespDTO(postInfoEntities);
-        return ResponseBuilder.build(true, respDTOS);
+        List<HomePagePostListDTO> homePagePostListDTOS = buildHomePagePostRespDTO(postInfoEntities);
+        List<TagInfoDTO> tagInfoDTOS = buildTagInfoList();
+        HomePageRespDTO respDTO = new HomePageRespDTO(){
+            {
+                setHomePagePostList(homePagePostListDTOS);
+                setTagInfoList(tagInfoDTOS);
+            }
+        };
+        return ResponseBuilder.build(true, respDTO);
+    }
+
+    public List<TagInfoDTO> buildTagInfoList() {
+        List<TagAmountDTO> tagAmountDTOS = tagService.queryTagAmount();
+        tagAmountDTOS = tagAmountDTOS.stream().sorted(Comparator.comparing(TagAmountDTO::getTagId)).collect(Collectors.toList());
+        List<TagEntity> tagEntities = tagService.queryByTagIdList(tagAmountDTOS.stream().map(item -> item.getTagId()).collect(Collectors.toList()));
+        List<TagInfoDTO> tagInfoDTOS = new ArrayList<>();
+        for (int i = 0; i < tagAmountDTOS.size(); ++i) {
+            TagInfoDTO tagInfoDTO = new TagInfoDTO();
+            tagInfoDTO.setTagName(tagEntities.get(i).getTagName());
+            tagInfoDTO.setTagNum(tagAmountDTOS.get(i).getAmount());
+            tagInfoDTOS.add(tagInfoDTO);
+        }
+        return tagInfoDTOS;
     }
 
     /**
@@ -129,8 +151,16 @@ public class PostBusiness {
         if(null == queryDTO)
             return ResponseBuilder.build(true,"分页查询条件为空");
         List<PostInfoEntity> entities = postService.queryPostListByPaging(queryDTO);
-        List<HomePagePostListRespDTO> respDTOS = buildHomePagePostRespDTO(entities);
-        return ResponseBuilder.build(true,respDTOS);
+        List<HomePagePostListDTO> homePagePostListDTOS = buildHomePagePostRespDTO(entities);
+        PostListQueryRespDTO respDTO = new PostListQueryRespDTO(){
+            {
+                setPostList(homePagePostListDTOS);
+                //TODO
+                setTotalNum(100);
+                setTagInfoList(buildTagInfoList());
+            }
+        };
+        return ResponseBuilder.build(true,respDTO);
     }
 
     //TODO tag?
@@ -199,10 +229,10 @@ public class PostBusiness {
         tagService.insertTagRelation(relationEntity);
     }
 
-    private List<HomePagePostListRespDTO> buildHomePagePostRespDTO(List<PostInfoEntity> postInfoEntities) {
-        List<HomePagePostListRespDTO> respDTOS = new ArrayList<>();
+    public List<HomePagePostListDTO> buildHomePagePostRespDTO(List<PostInfoEntity> postInfoEntities) {
+        List<HomePagePostListDTO> respDTOS = new ArrayList<>();
         for (PostInfoEntity postInfoEntity : postInfoEntities) {
-            HomePagePostListRespDTO respDTO = new HomePagePostListRespDTO() {
+            HomePagePostListDTO respDTO = new HomePagePostListDTO() {
                 {
                     setPostId(postInfoEntity.getPostId());
                     setTitle(postInfoEntity.getTitle());

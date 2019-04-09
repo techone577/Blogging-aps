@@ -22,4 +22,6 @@ public interface PostInfoEntityMapper {
     PostInfoEntity selectNextPost(@Param("addTime")Date addTime,@Param("postId")String postId);
 
     List<PostInfoEntity> selectPostListByPaging(PostPagingQueryDTO queryDTO);
+
+    List<PostInfoEntity> selectPostByIdList(@Param("postIdList") List<String> postIdList);
 }

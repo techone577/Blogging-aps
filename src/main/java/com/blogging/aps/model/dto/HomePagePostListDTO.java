@@ -2,7 +2,7 @@ package com.blogging.aps.model.dto;
 
 import java.util.List;
 
-public class HomePagePostListRespDTO {
+public class HomePagePostListDTO {
 
     private String postId;
 

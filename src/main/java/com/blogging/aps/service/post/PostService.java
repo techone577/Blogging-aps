@@ -69,4 +69,11 @@ public class PostService {
     public List<PostInfoEntity> queryPostListByPaging(PostPagingQueryDTO queryDTO){
         return postInfoEntityMapper.selectPostListByPaging(queryDTO);
     }
+
+    /**
+     * 根据id列表查询
+     */
+    public List<PostInfoEntity> queryPostListByIdList(List<String> postIds){
+        return postInfoEntityMapper.selectPostByIdList(postIds);
+    }
 }
