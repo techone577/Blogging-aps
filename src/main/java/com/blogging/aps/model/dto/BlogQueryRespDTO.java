@@ -18,6 +18,8 @@ public class BlogQueryRespDTO {
 
     private List<String> tagList;
 
+    private String TOC;
+
     public String getPostId() {
         return postId;
     }
@@ -72,5 +74,13 @@ public class BlogQueryRespDTO {
 
     public void setTagList(List<String> tagList) {
         this.tagList = tagList;
+    }
+
+    public String getTOC() {
+        return TOC;
+    }
+
+    public void setTOC(String TOC) {
+        this.TOC = TOC;
     }
 }

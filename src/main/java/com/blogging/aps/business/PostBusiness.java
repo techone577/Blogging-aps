@@ -128,6 +128,7 @@ public class PostBusiness {
             };
         }
         List<String> tags = getPostTags(reqDTO.getPostId());
+        String TOC = MarkDownUtils.generateTOCForMD(passageEntity.getContent());
         BlogQueryRespDTO respDTO = new BlogQueryRespDTO() {
             {
                 setPostId(reqDTO.getPostId());
@@ -135,6 +136,7 @@ public class PostBusiness {
                 setHtmlContent(htmlContent);
                 setAddTime(DateUtils.formatDate(postInfoEntity.getAddTime()));
                 setTagList(tags);
+                setTOC(TOC);
             }
         };
         respDTO.setPreviousPost(previousDTO);
