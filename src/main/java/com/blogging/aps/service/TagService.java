@@ -47,7 +47,11 @@ public class TagService {
         return tagRelationEntityMapper.selectTagAmount();
     }
 
-    public List<TagRelationEntity> queryTagReLationByTagId(Integer tagId){
+    public List<TagRelationEntity> queryTagReLationByTagIdPaging(Integer tagId,Integer pageNum, Integer pageSize){
+        return tagRelationEntityMapper.selectByTagIdPaging(tagId,pageNum,pageSize);
+    }
+
+    public List<TagRelationEntity> queryTagRelationByTagId(Integer tagId){
         return tagRelationEntityMapper.selectByTagId(tagId);
     }
 }

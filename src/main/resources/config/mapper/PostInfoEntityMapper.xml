@@ -141,16 +141,14 @@
     limit 1
   </select>
 
-  <select id="selectPostListByPaging" resultMap="BaseResultMap" parameterType="com.blogging.aps.model.dto.PostPagingQueryDTO">
+  <select id="selectPostListByPaging" resultMap="BaseResultMap">
     SELECT
     <include refid="Base_Column_List"/>
     FROM post_info
     WHERE
     del_flag = 0
-    AND
-    id &lt; #{lastMinId}
     ORDER BY id DESC
-    limit #{pageSize}
+    limit #{offSet},#{pageSize}
   </select>
 
   <select id="selectPostByIdList" resultMap="BaseResultMap">
@@ -167,5 +165,13 @@
         #{item}
       </foreach>
     </if>
+  </select>
+
+  <select id="selectPostCount" resultType="java.lang.Integer">
+    SELECT
+    count(*) as amount
+    FROM post_info
+    WHERE
+    del_flag = 0
   </select>
 </mapper>

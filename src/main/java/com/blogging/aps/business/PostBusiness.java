@@ -143,7 +143,7 @@ public class PostBusiness {
     }
 
     /**
-     * 分页查询博客列表
+     * 分页查询所有博客列表
      * @param queryDTO
      * @return
      */
@@ -151,13 +151,15 @@ public class PostBusiness {
         if(null == queryDTO)
             return ResponseBuilder.build(true,"分页查询条件为空");
         List<PostInfoEntity> entities = postService.queryPostListByPaging(queryDTO);
+        Integer minId = entities.stream().min(Comparator.comparing(PostInfoEntity::getId)).get().getId();
         List<HomePagePostListDTO> homePagePostListDTOS = buildHomePagePostRespDTO(entities);
+        Integer totalAmount = postService.queryPostCount();
         PostListQueryRespDTO respDTO = new PostListQueryRespDTO(){
             {
                 setPostList(homePagePostListDTOS);
-                //TODO
-                setTotalNum(100);
+                setTotalNum(totalAmount);
                 setTagInfoList(buildTagInfoList());
+                setMinId(minId);
             }
         };
         return ResponseBuilder.build(true,respDTO);

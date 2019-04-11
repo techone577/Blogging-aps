@@ -21,7 +21,9 @@ public interface PostInfoEntityMapper {
 
     PostInfoEntity selectNextPost(@Param("addTime")Date addTime,@Param("postId")String postId);
 
-    List<PostInfoEntity> selectPostListByPaging(PostPagingQueryDTO queryDTO);
+    List<PostInfoEntity> selectPostListByPaging(@Param("offSet")Integer offSet,@Param("pageSize") Integer pageSize);
 
     List<PostInfoEntity> selectPostByIdList(@Param("postIdList") List<String> postIdList);
+
+    Integer selectPostCount();
 }

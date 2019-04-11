@@ -91,7 +91,18 @@
     ORDER BY amount desc limit 20
   </select>
 
-  <select id="selectByTagId" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+  <select id="selectByTagIdPaging" resultMap="BaseResultMap">
+    SELECT
+    <include refid="Base_Column_List"/>
+    FROM tag_relation
+    WHERE
+    del_flag = 0
+    AND
+    tag_id = #{tagId}
+    limit #{offSet},#{pageSize}
+  </select>
+
+  <select id="selectByTagId" resultMap="BaseResultMap">
     SELECT
     <include refid="Base_Column_List"/>
     FROM tag_relation

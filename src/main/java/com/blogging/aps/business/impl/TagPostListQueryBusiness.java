@@ -13,14 +13,19 @@ import com.blogging.aps.model.entity.post.TagRelationEntity;
 import com.blogging.aps.service.TagService;
 import com.blogging.aps.service.post.PostService;
 import com.blogging.aps.support.utils.ResponseBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.net.URLDecoder;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Component
 public class TagPostListQueryBusiness extends AbstractPostListQueryBusiness {
+
+    private static final Logger LOG = LoggerFactory.getLogger(TagPostListQueryBusiness.class);
 
     @Autowired
     private PostService postService;
@@ -34,9 +39,14 @@ public class TagPostListQueryBusiness extends AbstractPostListQueryBusiness {
     @Override
     public Response queryPostList(PostPagingQueryDTO queryDTO) {
         String tagName = queryDTO.getTypeValue();
-        //TODO 分页
         List<TagEntity> tagEntities = tagService.queryTagByName(tagName);
-        List<TagRelationEntity> tagRelationEntities = tagService.queryTagReLationByTagId(tagEntities.get(0).getId());
+        if(null == tagEntities || tagEntities.size() == 0 ) {
+            LOG.info("查询tag失败，不存在此tag:{}", queryDTO.getTypeValue());
+            return ResponseBuilder.build(true,"tag不存在！");
+        }
+        List<TagRelationEntity> tagRelationEntities = tagService.queryTagReLationByTagIdPaging(tagEntities.get(0).getId(),
+                queryDTO.getPageNum() * queryDTO.getPageSize(), queryDTO.getPageSize());
+        Integer size = tagService.queryTagRelationByTagId(tagEntities.get(0).getId()).size();
         List<String> postIds = tagRelationEntities
                 .stream().map(i->i.getPostId()).collect(Collectors.toList());
         List<PostInfoEntity> postInfoEntities = postService.queryPostListByIdList(postIds);
@@ -44,7 +54,7 @@ public class TagPostListQueryBusiness extends AbstractPostListQueryBusiness {
         PostListQueryRespDTO respDTO = new PostListQueryRespDTO(){
             {
                 setPostList(homePagePostListDTOS);
-                setTotalNum(postInfoEntities.size());
+                setTotalNum(size);
                 setTagInfoList(postBusiness.buildTagInfoList());
             }
         };

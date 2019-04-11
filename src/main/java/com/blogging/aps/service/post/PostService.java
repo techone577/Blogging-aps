@@ -67,7 +67,7 @@ public class PostService {
      * 分页查询博客列表
      */
     public List<PostInfoEntity> queryPostListByPaging(PostPagingQueryDTO queryDTO){
-        return postInfoEntityMapper.selectPostListByPaging(queryDTO);
+        return postInfoEntityMapper.selectPostListByPaging(queryDTO.getPageNum()*queryDTO.getPageSize(),queryDTO.getPageSize());
     }
 
     /**
@@ -75,5 +75,12 @@ public class PostService {
      */
     public List<PostInfoEntity> queryPostListByIdList(List<String> postIds){
         return postInfoEntityMapper.selectPostByIdList(postIds);
+    }
+
+    /**
+     * 统计所有博客数量
+     */
+    public Integer queryPostCount(){
+        return postInfoEntityMapper.selectPostCount();
     }
 }

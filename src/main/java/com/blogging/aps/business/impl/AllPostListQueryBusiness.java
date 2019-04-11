@@ -8,11 +8,9 @@ import com.blogging.aps.model.entity.Response;
 import com.blogging.aps.model.entity.post.PostInfoEntity;
 import com.blogging.aps.service.TagService;
 import com.blogging.aps.service.post.PostService;
-import com.blogging.aps.support.utils.ResponseBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
 
 @Component
 public class AllPostListQueryBusiness extends AbstractPostListQueryBusiness {

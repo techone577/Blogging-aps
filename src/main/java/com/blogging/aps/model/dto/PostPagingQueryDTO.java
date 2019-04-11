@@ -2,7 +2,7 @@ package com.blogging.aps.model.dto;
 
 public class PostPagingQueryDTO {
 
-    private Integer lastMinId = Integer.MAX_VALUE;
+    private Integer pageNum = 0;
 
     private Integer pageSize = 5;
 
@@ -10,12 +10,12 @@ public class PostPagingQueryDTO {
 
     private String typeValue;
 
-    public Integer getLastMinId() {
-        return lastMinId;
+    public Integer getPageNum() {
+        return pageNum;
     }
 
-    public void setLastMinId(Integer lastMinId) {
-        this.lastMinId = lastMinId;
+    public void setPageNum(Integer pageNum) {
+        this.pageNum = pageNum;
     }
 
     public Integer getPageSize() {

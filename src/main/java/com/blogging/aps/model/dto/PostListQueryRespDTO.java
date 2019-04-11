@@ -10,6 +10,8 @@ public class PostListQueryRespDTO {
 
     private Integer totalNum;
 
+    private Integer minId;
+
     public List<HomePagePostListDTO> getPostList() {
         return postList;
     }
@@ -32,5 +34,13 @@ public class PostListQueryRespDTO {
 
     public void setTotalNum(Integer totalNum) {
         this.totalNum = totalNum;
+    }
+
+    public Integer getMinId() {
+        return minId;
+    }
+
+    public void setMinId(Integer minId) {
+        this.minId = minId;
     }
 }
