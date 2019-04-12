@@ -54,7 +54,7 @@ public class TagPostListQueryBusiness extends AbstractPostListQueryBusiness {
             {
                 setPostList(homePagePostListDTOS);
                 setTotalNum(size);
-                setTagInfoList(postBusiness.buildTagInfoList());
+                setTagInfoList(postBusiness.queryTagInfoList());
             }
         };
         Response resp = ResponseBuilder.build(true,respDTO);

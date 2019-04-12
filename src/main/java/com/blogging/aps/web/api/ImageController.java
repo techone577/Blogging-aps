@@ -1,5 +1,6 @@
 package com.blogging.aps.web.api;
 
+import com.blogging.aps.model.dto.ImageLoadReqDTO;
 import com.blogging.aps.model.dto.ImageReqDTO;
 import com.blogging.aps.model.entity.Response;
 import com.blogging.aps.support.annotation.Json;
@@ -13,11 +14,15 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+import sun.misc.BASE64Encoder;
 
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
-import java.io.File;
+import javax.servlet.http.HttpServletResponse;
+import java.io.*;
 import java.net.InetAddress;
 import java.util.HashMap;
 import java.util.Map;
@@ -40,6 +45,7 @@ public class ImageController {
     @RequestMapping(value = "/upload", method = RequestMethod.POST)
     @ServiceInfo(name = "Blogging.APS.ImageController.upload", description = "图片上传")
     public Response uploadImage(@Json ImageReqDTO reqDTO, HttpServletRequest request) throws Exception {
+        LOG.info("图片上传！");
         String imString = reqDTO.getImString();
         Map<String, Object> resp = new HashMap<>();
         String originalName = reqDTO.getOrignalName();
@@ -62,10 +68,38 @@ public class ImageController {
         } catch (Exception e) {
             LOG.info("获取ip异常:{}", e);
         }
-        String imPath = path + file.getName();
+        String route = "/imageView/showImg?imgId=";
+        String imPath = route + file.getName();
         sb.append(imPath);
         resp.put("url", sb.toString());
+        LOG.info("图片上传返回地址：{}",sb.toString());
         return ResponseBuilder.build(true, JsonUtil.toString(resp));
     }
 
+    @RequestMapping(value = "/obtain",method = RequestMethod.POST)
+    @ServiceInfo(name = "Blogging.APS.ImageController.obtain")
+    public Response obtainImage(@Json ImageLoadReqDTO reqDTO, HttpServletRequest request, HttpServletResponse response) throws Exception{
+        String path = "WEB-INF/image/"+reqDTO.getImageId();
+        File file = new File(request.getServletContext().getRealPath(path));
+        FileInputStream fileInputStream = new FileInputStream(file);
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        try {
+
+            byte[] buffer = new byte[1024];
+            int ch = 0;
+            while ((ch = fileInputStream.read(buffer)) != -1) {
+                outputStream.write(buffer,0,ch);
+            }
+            BASE64Encoder encoder = new BASE64Encoder();
+            String imString = encoder.encode(outputStream.toByteArray());
+            return ResponseBuilder.build(true,imString);
+
+        } catch (Exception e) {
+            LOG.error(e.getMessage());
+        } finally {
+            outputStream.close();
+            fileInputStream.close();
+        }
+        return null;
+    }
 }

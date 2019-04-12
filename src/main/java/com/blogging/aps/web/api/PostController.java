@@ -117,4 +117,16 @@ public class PostController {
         LOG.info("文章拉取出参:{}", JsonUtil.toString(response));
         return response;
     }
+
+    /**
+     * 所有tag展示
+     */
+    @RequestMapping(value = "/tagshow", method = RequestMethod.POST)
+    @ServiceInfo(name = "Blogging.APS.PostController.tagShow", description = "展示所有tag")
+    public Response tagShow() {
+        LOG.info("查询所有tag!");
+        Response resp = postBusiness.queryAllTags();
+        LOG.info("查询所有tag出参:{}", JsonUtil.toString(resp));
+        return resp;
+    }
 }

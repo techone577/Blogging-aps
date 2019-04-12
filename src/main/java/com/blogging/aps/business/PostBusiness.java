@@ -71,7 +71,7 @@ public class PostBusiness {
         if (postInfoEntities.size() == 0)
             return ResponseBuilder.build(true, null);
         List<HomePagePostListDTO> homePagePostListDTOS = buildHomePagePostRespDTO(postInfoEntities);
-        List<TagInfoDTO> tagInfoDTOS = buildTagInfoList();
+        List<TagInfoDTO> tagInfoDTOS = queryTagInfoList();
         HomePageRespDTO respDTO = new HomePageRespDTO(){
             {
                 setHomePagePostList(homePagePostListDTOS);
@@ -81,10 +81,14 @@ public class PostBusiness {
         return ResponseBuilder.build(true, respDTO);
     }
 
-    public List<TagInfoDTO> buildTagInfoList() {
+    public List<TagInfoDTO> queryTagInfoList() {
         List<TagAmountDTO> tagAmountDTOS = tagService.queryTagAmount();
         tagAmountDTOS = tagAmountDTOS.stream().sorted(Comparator.comparing(TagAmountDTO::getTagId)).collect(Collectors.toList());
         List<TagEntity> tagEntities = tagService.queryByTagIdList(tagAmountDTOS.stream().map(item -> item.getTagId()).collect(Collectors.toList()));
+        return buildTagInfoList(tagAmountDTOS,tagEntities);
+    }
+
+    private List<TagInfoDTO> buildTagInfoList(List<TagAmountDTO> tagAmountDTOS, List<TagEntity> tagEntities) {
         List<TagInfoDTO> tagInfoDTOS = new ArrayList<>();
         for (int i = 0; i < tagAmountDTOS.size(); ++i) {
             TagInfoDTO tagInfoDTO = new TagInfoDTO();
@@ -160,7 +164,7 @@ public class PostBusiness {
             {
                 setPostList(homePagePostListDTOS);
                 setTotalNum(totalAmount);
-                setTagInfoList(buildTagInfoList());
+                setTagInfoList(queryTagInfoList());
                 setMinId(minId);
             }
         };
@@ -282,5 +286,24 @@ public class PostBusiness {
             return ResponseBuilder.build(true,"文章为空");
 
         return ResponseBuilder.build(true,passageEntity.getContent());
+    }
+
+    /**
+     * 查询所有tag
+     */
+    public Response queryAllTags(){
+        List<TagAmountDTO> tagAmountDTOS = tagService.queryTagAmount();
+        tagAmountDTOS = tagAmountDTOS.stream().sorted(Comparator.comparing(TagAmountDTO::getTagId)).collect(Collectors.toList());
+        List<TagEntity> tagEntities = tagService.queryByTagIdList(tagAmountDTOS.stream().map(item -> item.getTagId()).collect(Collectors.toList()));
+        List<TagInfoDTO> allTagInfos = buildTagInfoList(tagAmountDTOS,tagEntities);
+        List<TagInfoDTO> hotTagInfos = queryTagInfoList();
+        TagShowRespDTO respDTO = new TagShowRespDTO(){
+            {
+                setAllTags(allTagInfos);
+                setHotTags(hotTagInfos);
+            }
+        };
+        return ResponseBuilder.build(true,respDTO);
+
     }
 }

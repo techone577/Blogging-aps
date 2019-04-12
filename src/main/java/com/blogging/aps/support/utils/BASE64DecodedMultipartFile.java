@@ -1,5 +1,6 @@
 package com.blogging.aps.support.utils;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
@@ -15,6 +16,8 @@ public class BASE64DecodedMultipartFile implements MultipartFile {
 
     private String originalName;
 
+    private String fileName;
+
     public BASE64DecodedMultipartFile(byte[] imgContent ,String name) {
         this.imgContent = imgContent;
         this.originalName = name;
@@ -22,7 +25,10 @@ public class BASE64DecodedMultipartFile implements MultipartFile {
 
     @Override
     public String getName() {
-        return IdGenerator.generateImageId() + getContentType();
+        if(StringUtils.isBlank(fileName)){
+            fileName = IdGenerator.generateImageId();
+        }
+        return fileName;
     }
 
     @Override

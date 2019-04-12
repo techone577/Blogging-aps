@@ -19,4 +19,6 @@ public interface TagRelationEntityMapper {
     List<TagRelationEntity> selectByTagIdPaging(@Param("tagId") Integer tagId,@Param("offSet") Integer offSet, @Param("pageSize") Integer pageSize);
 
     List<TagRelationEntity> selectByTagId(@Param("tagId") Integer tagId);
+
+    List<TagAmountDTO> selectAllTagAmount();
 }

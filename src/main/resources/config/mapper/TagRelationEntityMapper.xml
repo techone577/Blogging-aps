@@ -91,6 +91,16 @@
     ORDER BY amount desc limit 20
   </select>
 
+  <select id="selectAllTagAmount" resultMap="TagAmountResultMap">
+    SELECT
+    <include refid="Amount_Statistic_List"/>
+    FROM tag_relation
+    WHERE
+    del_flag = 0
+    GROUP BY tag_id
+    ORDER BY amount desc
+  </select>
+
   <select id="selectByTagIdPaging" resultMap="BaseResultMap">
     SELECT
     <include refid="Base_Column_List"/>
