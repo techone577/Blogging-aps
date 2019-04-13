@@ -3,7 +3,6 @@ package com.blogging.aps.business.impl;
 import com.blogging.aps.business.PostBusiness;
 import com.blogging.aps.business.manage.AbstractPostListQueryBusiness;
 import com.blogging.aps.model.dto.HomePagePostListDTO;
-import com.blogging.aps.model.dto.HomePageRespDTO;
 import com.blogging.aps.model.dto.PostListQueryRespDTO;
 import com.blogging.aps.model.dto.PostPagingQueryDTO;
 import com.blogging.aps.model.entity.Response;
@@ -48,7 +47,7 @@ public class TagPostListQueryBusiness extends AbstractPostListQueryBusiness {
         Integer size = tagService.queryTagRelationByTagId(tagEntities.get(0).getId()).size();
         List<String> postIds = tagRelationEntities
                 .stream().map(i->i.getPostId()).collect(Collectors.toList());
-        List<PostInfoEntity> postInfoEntities = postService.queryPostListByIdList(postIds);
+        List<PostInfoEntity> postInfoEntities = postService.queryPostListByIdList(postIds,queryDTO.getReleaseFlag());
         List<HomePagePostListDTO> homePagePostListDTOS = postBusiness.buildHomePagePostRespDTO(postInfoEntities);
         PostListQueryRespDTO respDTO = new PostListQueryRespDTO(){
             {

@@ -52,35 +52,35 @@ public class PostService {
     /**
      * 查询上一篇文章
      */
-    public PostInfoEntity queryPreviousPost(Date addtime,String postId){
-        return postInfoEntityMapper.selectPreviousPost(addtime,postId);
+    public PostInfoEntity queryPreviousPost(Integer id,String postId){
+        return postInfoEntityMapper.selectPreviousPost(id,postId);
     }
 
     /**
      * 查询下一篇文章
      */
-    public PostInfoEntity queryNextPost(Date addtime,String postId){
-        return postInfoEntityMapper.selectNextPost(addtime,postId);
+    public PostInfoEntity queryNextPost(Integer id,String postId){
+        return postInfoEntityMapper.selectNextPost(id,postId);
     }
 
     /**
      * 分页查询博客列表
      */
     public List<PostInfoEntity> queryPostListByPaging(PostPagingQueryDTO queryDTO){
-        return postInfoEntityMapper.selectPostListByPaging(queryDTO.getPageNum()*queryDTO.getPageSize(),queryDTO.getPageSize());
+        return postInfoEntityMapper.selectPostListByPaging(queryDTO.getPageNum()*queryDTO.getPageSize(),queryDTO.getPageSize(), queryDTO.getReleaseFlag());
     }
 
     /**
      * 根据id列表查询
      */
-    public List<PostInfoEntity> queryPostListByIdList(List<String> postIds){
-        return postInfoEntityMapper.selectPostByIdList(postIds);
+    public List<PostInfoEntity> queryPostListByIdList(List<String> postIds, Integer releaseFlag){
+        return postInfoEntityMapper.selectPostByIdList(postIds, releaseFlag);
     }
 
     /**
-     * 统计所有博客数量
+     * 统计所有已发布博客数量
      */
-    public Integer queryPostCount(){
-        return postInfoEntityMapper.selectPostCount();
+    public Integer queryPostCount(Integer releaseFlag){
+        return postInfoEntityMapper.selectPostCount(releaseFlag);
     }
 }

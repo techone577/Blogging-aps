@@ -8,21 +8,22 @@
     <result column="title"  property="title" />
     <result column="category"  property="category" />
     <result column="passage_id"  property="passageId" />
+    <result column="release_flag" property="releaseFlag"/>
     <result column="del_flag"  property="delFlag" />
     <result column="add_time"  property="addTime" />
     <result column="update_time"  property="updateTime" />
     <result column="summary"  property="summary" />
   </resultMap>
   <sql id="Base_Column_List">
-    id, post_id, member_id, title, category, passage_id, del_flag, add_time, update_time, summary
+    id, post_id, member_id, title, category, passage_id, release_flag, del_flag, add_time, update_time, summary
   </sql>
   <insert id="insert" parameterType="com.blogging.aps.model.entity.post.PostInfoEntity">
     insert into post_info (id, post_id, member_id, 
-      title, category, passage_id, 
+      title, category, passage_id, release_flag,
       del_flag, add_time, update_time, 
       summary)
     values (#{id}, #{postId}, #{memberId}, 
-      #{title}, #{category}, #{passageId}, 
+      #{title}, #{category}, #{passageId}, #{releaseFlag},
       #{delFlag}, #{addTime}, #{updateTime}, 
       #{summary})
   </insert>
@@ -46,6 +47,9 @@
       </if>
       <if test="passageId != null">
         passage_id,
+      </if>
+      <if test="releaseFlag != null">
+        release_flag,
       </if>
       <if test="delFlag != null">
         del_flag,
@@ -79,6 +83,9 @@
       <if test="passageId != null">
         #{passageId},
       </if>
+      <if test="releaseFlag != null">
+        #{releaseFlag},
+      </if>
       <if test="delFlag != null">
         #{delFlag},
       </if>
@@ -100,6 +107,8 @@
     FROM post_info
     WHERE
     del_flag = 0
+    AND
+    release_flag = 1
     ORDER BY  update_time DESC
     limit 5
   </select>
@@ -121,11 +130,10 @@
     WHERE
     del_flag = 0
     AND
-    post_id not in (#{postId})
-    AND
-    add_time &lt; #{addTime}
-    ORDER BY add_time DESC
-    limit 1
+    release_flag = 1
+    AND id in (
+        select min(t.id) from post_info t where t.id &gt; #{id}
+    )
   </select>
 
   <select id="selectNextPost" resultMap="BaseResultMap">
@@ -135,10 +143,10 @@
     WHERE
     del_flag = 0
     AND
-    post_id not in (#{postId})
-    AND
-    add_time &gt; #{addTime}
-    limit 1
+    release_flag = 1
+    AND id in (
+        select max(t.id) from post_info t where t.id &lt; #{id}
+    )
   </select>
 
   <select id="selectPostListByPaging" resultMap="BaseResultMap">
@@ -147,6 +155,10 @@
     FROM post_info
     WHERE
     del_flag = 0
+    <if test="releaseFlag != null">
+      AND
+      release_flag = #{releaseFlag}
+    </if>
     ORDER BY id DESC
     limit #{offSet},#{pageSize}
   </select>
@@ -157,6 +169,10 @@
     FROM post_info
     WHERE
     del_flag = 0
+    <if test="releaseFlag != null">
+      AND
+      release_flag = #{releaseFlag}
+    </if>
     <if test="postIdList != null">
       AND
       post_id in
@@ -173,5 +189,9 @@
     FROM post_info
     WHERE
     del_flag = 0
+    <if test="releaseFlag != null">
+      AND
+      release_flag = #{releaseFlag}
+    </if>
   </select>
 </mapper>

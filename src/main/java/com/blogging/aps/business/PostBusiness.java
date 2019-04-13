@@ -111,8 +111,8 @@ public class PostBusiness {
         PassageEntity passageEntity = postService.queryPassageByPassageId(postInfoEntity.getPassageId());
         String htmlContent = MarkDownUtils.markDownToHtml(passageEntity.getContent());
 
-        PostInfoEntity previous = postService.queryPreviousPost(postInfoEntity.getAddTime(), reqDTO.getPostId());
-        PostInfoEntity next = postService.queryNextPost(postInfoEntity.getAddTime(), reqDTO.getPostId());
+        PostInfoEntity previous = postService.queryPreviousPost(postInfoEntity.getId(), reqDTO.getPostId());
+        PostInfoEntity next = postService.queryNextPost(postInfoEntity.getId(), reqDTO.getPostId());
 
         PostInfoDTO previousDTO = null, nextDTO = null;
         if (null != previous) {
@@ -157,9 +157,11 @@ public class PostBusiness {
         if(null == queryDTO)
             return ResponseBuilder.build(true,"分页查询条件为空");
         List<PostInfoEntity> entities = postService.queryPostListByPaging(queryDTO);
+        if(null == entities || entities.size() == 0)
+            return ResponseBuilder.build(true,"文章列表为空");
         Integer minId = entities.stream().min(Comparator.comparing(PostInfoEntity::getId)).get().getId();
         List<HomePagePostListDTO> homePagePostListDTOS = buildHomePagePostRespDTO(entities);
-        Integer totalAmount = postService.queryPostCount();
+        Integer totalAmount = postService.queryPostCount(queryDTO.getReleaseFlag());
         PostListQueryRespDTO respDTO = new PostListQueryRespDTO(){
             {
                 setPostList(homePagePostListDTOS);
@@ -245,10 +247,12 @@ public class PostBusiness {
                     setPostId(postInfoEntity.getPostId());
                     setTitle(postInfoEntity.getTitle());
                     setSummary(postInfoEntity.getSummary());
-                    setUpdateTime(DateUtils.formatDate(postInfoEntity.getUpdateTime()));
+                    setReleaseFlag(postInfoEntity.getReleaseFlag());
+                    setAddTime(DateUtils.formatDateTime(postInfoEntity.getAddTime()));
+                    setUpdateTime(DateUtils.formatDateTime(postInfoEntity.getUpdateTime()));
                 }
             };
-            List<String> tagList  =getPostTags(postInfoEntity.getPostId());
+            List<String> tagList = getPostTags(postInfoEntity.getPostId());
             //TODO 可以缓存tag列表
             if (null == tagList || tagList.size() == 0) {
                 respDTO.setTagList(new ArrayList<>());
@@ -260,7 +264,7 @@ public class PostBusiness {
         return respDTOS;
     }
 
-    private List<String> getPostTags(String postId) {
+    public List<String> getPostTags(String postId) {
 
         List<Integer> tagIdList = tagService.queryByPostId(postId)
                 .stream().map(item -> item.getTagId()).collect(Collectors.toList());
@@ -293,6 +297,9 @@ public class PostBusiness {
      */
     public Response queryAllTags(){
         List<TagAmountDTO> tagAmountDTOS = tagService.queryTagAmount();
+        if(null == tagAmountDTOS || tagAmountDTOS.size() == 0){
+            return ResponseBuilder.build(true,"标签列表为空");
+        }
         tagAmountDTOS = tagAmountDTOS.stream().sorted(Comparator.comparing(TagAmountDTO::getTagId)).collect(Collectors.toList());
         List<TagEntity> tagEntities = tagService.queryByTagIdList(tagAmountDTOS.stream().map(item -> item.getTagId()).collect(Collectors.toList()));
         List<TagInfoDTO> allTagInfos = buildTagInfoList(tagAmountDTOS,tagEntities);

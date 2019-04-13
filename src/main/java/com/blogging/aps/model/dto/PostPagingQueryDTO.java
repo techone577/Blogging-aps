@@ -10,6 +10,8 @@ public class PostPagingQueryDTO {
 
     private String typeValue;
 
+    private Integer releaseFlag = 1;
+
     public Integer getPageNum() {
         return pageNum;
     }
@@ -40,5 +42,13 @@ public class PostPagingQueryDTO {
 
     public void setTypeValue(String typeValue) {
         this.typeValue = typeValue;
+    }
+
+    public Integer getReleaseFlag() {
+        return releaseFlag;
+    }
+
+    public void setReleaseFlag(Integer releaseFlag) {
+        this.releaseFlag = releaseFlag;
     }
 }

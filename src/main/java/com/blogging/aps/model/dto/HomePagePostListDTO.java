@@ -10,7 +10,11 @@ public class HomePagePostListDTO {
 
     private String summary;
 
+    private String addTime;
+
     private String updateTime;
+
+    private Integer releaseFlag;
 
     private List<String> tagList;
 
@@ -38,12 +42,28 @@ public class HomePagePostListDTO {
         this.summary = summary;
     }
 
+    public String getAddTime() {
+        return addTime;
+    }
+
+    public void setAddTime(String addTime) {
+        this.addTime = addTime;
+    }
+
     public String getUpdateTime() {
         return updateTime;
     }
 
     public void setUpdateTime(String updateTime) {
         this.updateTime = updateTime;
+    }
+
+    public Integer getReleaseFlag() {
+        return releaseFlag;
+    }
+
+    public void setReleaseFlag(Integer releaseFlag) {
+        this.releaseFlag = releaseFlag;
     }
 
     public List<String> getTagList() {

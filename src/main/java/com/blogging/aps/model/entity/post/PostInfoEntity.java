@@ -15,6 +15,8 @@ public class PostInfoEntity {
 
     private String passageId;
 
+    private Integer releaseFlag;
+
     private Integer delFlag;
 
     private Date addTime;
@@ -69,6 +71,14 @@ public class PostInfoEntity {
 
     public void setPassageId(String passageId) {
         this.passageId = passageId == null ? null : passageId.trim();
+    }
+
+    public Integer getReleaseFlag() {
+        return releaseFlag;
+    }
+
+    public void setReleaseFlag(Integer releaseFlag) {
+        this.releaseFlag = releaseFlag;
     }
 
     public Integer getDelFlag() {
