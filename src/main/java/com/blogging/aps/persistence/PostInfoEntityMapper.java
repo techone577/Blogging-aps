@@ -4,7 +4,6 @@ package com.blogging.aps.persistence;
 import com.blogging.aps.model.entity.post.PostInfoEntity;
 import org.apache.ibatis.annotations.Param;
 
-import java.util.Date;
 import java.util.List;
 
 public interface PostInfoEntityMapper {
@@ -20,9 +19,10 @@ public interface PostInfoEntityMapper {
 
     PostInfoEntity selectNextPost(@Param("id")Integer id,@Param("postId")String postId);
 
-    List<PostInfoEntity> selectPostListByPaging(@Param("offSet")Integer offSet,@Param("pageSize") Integer pageSize,@Param("releaseFlag") Integer releaseFlag);
+    List<PostInfoEntity> selectPostListByPaging(@Param("offSet")Integer offSet,@Param("pageSize") Integer pageSize
+            ,@Param("releaseFlag") Integer releaseFlag, @Param("delFlag")Integer delFlag);
 
     List<PostInfoEntity> selectPostByIdList(@Param("postIdList") List<String> postIdList, @Param("releaseFlag") Integer releaseFlag);
 
-    Integer selectPostCount(@Param("releaseFlag") Integer releaseFlag);
+    Integer selectPostCount(@Param("releaseFlag") Integer releaseFlag, @Param("delFlag") Integer delFlag);
 }

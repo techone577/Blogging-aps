@@ -5,6 +5,7 @@ import com.blogging.aps.business.PostBusiness;
 import com.blogging.aps.business.manage.AbstractPostListQueryBusiness;
 import com.blogging.aps.model.dto.PostPagingQueryDTO;
 import com.blogging.aps.model.dto.PostQueryReqDTO;
+import com.blogging.aps.model.dto.TagQueryDTO;
 import com.blogging.aps.model.entity.Response;
 import com.blogging.aps.support.annotation.Json;
 import com.blogging.aps.support.annotation.ServiceInfo;
@@ -37,27 +38,28 @@ public class BackManagementController {
     private FactoryList<AbstractPostListQueryBusiness, String> postListQueryBusiness;
 
     /**
-     * 查询所有tag（供后管使用）
+     *
+     *通过查询参数查询tag
      */
     @RequestMapping(value = "/queryTags", method = RequestMethod.POST)
-    @ServiceInfo(name = "Blogging.APS.BMController.queryTags", description = "查询所有tag")
-    public Response queryTags() {
-        LOG.info("查询所有tag!");
-        Response resp = bmBusiness.queryTags();
-        LOG.info("查询所有tag出参:{}", JsonUtil.toString(resp));
+    @ServiceInfo(name = "Blogging.APS.BMController.queryTags")
+    public Response queryTagByParam(@Json TagQueryDTO dto) {
+        LOG.info("(BM)tag查询入参:{}", JsonUtil.toString(dto));
+        Response resp = bmBusiness.queryTagByParam(dto);
+        LOG.info("(BM)查询tag出参:{}", JsonUtil.toString(resp));
         return resp;
     }
 
     /**
-     * 查询文章列表
+     * 查询文章列表 / 查询回收文章
      *
      */
     @RequestMapping(value = "/queryPosts", method = RequestMethod.POST)
     @ServiceInfo(name = "Blogging.APS.BMController.queryPosts", description = "文章列表查询")
     public Response queryPosts (@Json PostPagingQueryDTO queryDTO) {
-        LOG.info("（后管）文章列表分页查询入参:{}",JsonUtil.toString(queryDTO));
+        LOG.info("（BM）文章列表分页查询入参:{}",JsonUtil.toString(queryDTO));
         Response resp = postListQueryBusiness.getBean("all").queryPostList(queryDTO);
-        LOG.info("（后管）文章列表分页查询出参:{}", JsonUtil.toString(resp));
+        LOG.info("（BM）文章列表分页查询出参:{}", JsonUtil.toString(resp));
         return resp;
     }
 
@@ -67,9 +69,9 @@ public class BackManagementController {
     @RequestMapping(value = "/queryBlog", method = RequestMethod.POST)
     @ServiceInfo(name = "Blogging.APS.BMController.queryBlog", description = "查询博客")
     public Response queryBlog(@Json PostQueryReqDTO reqDTO) {
-        LOG.info("（后管）博客查询入参:{}", JsonUtil.toString(reqDTO));
+        LOG.info("（BM）博客查询入参:{}", JsonUtil.toString(reqDTO));
         Response resp = bmBusiness.queryBlog(reqDTO);
-        LOG.info("（后管）博客查询出参:{}", JsonUtil.toString(resp));
+        LOG.info("（BM）博客查询出参:{}", JsonUtil.toString(resp));
         return resp;
     }
 

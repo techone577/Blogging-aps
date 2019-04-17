@@ -1,26 +1,28 @@
 package com.blogging.aps.business;
 
 
-import com.blogging.aps.model.dto.BMBlogQueryRespDTO;
-import com.blogging.aps.model.dto.BMTagQueryRespDTO;
-import com.blogging.aps.model.dto.PostQueryReqDTO;
-import com.blogging.aps.model.dto.TagAmountDTO;
+import com.blogging.aps.business.manage.AbstractPostListQueryBusiness;
+import com.blogging.aps.model.dto.*;
 import com.blogging.aps.model.entity.Response;
 import com.blogging.aps.model.entity.post.PassageEntity;
 import com.blogging.aps.model.entity.post.PostInfoEntity;
 import com.blogging.aps.model.entity.post.TagEntity;
 import com.blogging.aps.service.TagService;
 import com.blogging.aps.service.post.PostService;
+import com.blogging.aps.support.strategy.FactoryList;
 import com.blogging.aps.support.utils.DateUtils;
 import com.blogging.aps.support.utils.ResponseBuilder;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -44,11 +46,14 @@ public class BMBusiness {
     @Autowired
     private PostBusiness postBusiness;
 
+    @Autowired
+    private FactoryList<AbstractPostListQueryBusiness, String> postListQueryBusiness;
+
 
     /**
      * 查询所有tag
      */
-    public Response queryTags() {
+    private Response queryTags() {
         List<TagAmountDTO> tagAmountDTOS = tagService.queryTagAmount();
         if (null == tagAmountDTOS || tagAmountDTOS.size() == 0) {
             return ResponseBuilder.build(true, "标签列表为空");
@@ -57,6 +62,33 @@ public class BMBusiness {
         List<TagEntity> tagEntities = tagService.queryByTagIdList(tagAmountDTOS.stream().map(item -> item.getTagId()).collect(Collectors.toList()));
         List<BMTagQueryRespDTO> tagQueryRespDTOS = buildTagRespDTO(tagEntities, tagAmountDTOS);
         return ResponseBuilder.build(true, tagQueryRespDTOS);
+    }
+
+    /**
+     * 按照参数查询tag
+     * @param dto
+     * @return
+     */
+    public Response queryTagByParam(TagQueryDTO dto){
+        if(null == dto || StringUtils.isBlank(dto.getName()))
+            return queryTags();
+        List<TagAmountDTO> tagAmountDTOS = tagService.queryTagAmount();
+        List<TagEntity> tagList = tagService.queryTagByName(dto.getName());
+        if(null == tagList || tagList.size() == 0)
+            return ResponseBuilder.build(true,null);
+        TagEntity tagEntity = tagList.get(0);
+        Optional<TagAmountDTO> optional = tagAmountDTOS.stream().filter(i->i.getTagId() == tagList.get(0).getId()).findAny();
+        BMTagQueryRespDTO respDTO = new BMTagQueryRespDTO();
+        if(optional.isPresent())
+            respDTO.setPostNum(optional.get().getAmount());
+        respDTO.setTagId(tagEntity.getId());
+        respDTO.setTagName(tagEntity.getTagName());
+        respDTO.setUpdateTime(DateUtils.formatDateTime(tagEntity.getUpdateTime()));
+        respDTO.setAddTime(DateUtils.formatDateTime(tagEntity.getAddTime()));
+        List<BMTagQueryRespDTO> respDTOS = new ArrayList<BMTagQueryRespDTO>(){{
+            add(respDTO);
+        }};
+        return ResponseBuilder.build(true,respDTOS);
     }
 
     private List<BMTagQueryRespDTO> buildTagRespDTO(List<TagEntity> tagEntities, List<TagAmountDTO> tagAmountDTOS) {

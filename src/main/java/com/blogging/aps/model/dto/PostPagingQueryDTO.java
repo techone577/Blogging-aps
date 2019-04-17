@@ -12,6 +12,8 @@ public class PostPagingQueryDTO {
 
     private Integer releaseFlag = 1;
 
+    private Integer delFlag;
+
     public Integer getPageNum() {
         return pageNum;
     }
@@ -50,5 +52,13 @@ public class PostPagingQueryDTO {
 
     public void setReleaseFlag(Integer releaseFlag) {
         this.releaseFlag = releaseFlag;
+    }
+
+    public Integer getDelFlag() {
+        return delFlag;
+    }
+
+    public void setDelFlag(Integer delFlag) {
+        this.delFlag = delFlag;
     }
 }

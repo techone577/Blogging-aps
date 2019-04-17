@@ -8,7 +8,6 @@ import com.blogging.aps.persistence.PostInfoEntityMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -67,7 +66,8 @@ public class PostService {
      * 分页查询博客列表
      */
     public List<PostInfoEntity> queryPostListByPaging(PostPagingQueryDTO queryDTO){
-        return postInfoEntityMapper.selectPostListByPaging(queryDTO.getPageNum()*queryDTO.getPageSize(),queryDTO.getPageSize(), queryDTO.getReleaseFlag());
+        return postInfoEntityMapper.selectPostListByPaging(queryDTO.getPageNum()*queryDTO.getPageSize(),queryDTO.getPageSize()
+                , queryDTO.getReleaseFlag(), queryDTO.getDelFlag());
     }
 
     /**
@@ -80,7 +80,7 @@ public class PostService {
     /**
      * 统计所有已发布博客数量
      */
-    public Integer queryPostCount(Integer releaseFlag){
-        return postInfoEntityMapper.selectPostCount(releaseFlag);
+    public Integer queryPostCount(Integer releaseFlag, Integer delFlag){
+        return postInfoEntityMapper.selectPostCount(releaseFlag, delFlag);
     }
 }

@@ -154,8 +154,13 @@
     <include refid="Base_Column_List"/>
     FROM post_info
     WHERE
-    del_flag = 0
-    <if test="releaseFlag != null">
+    <if test="delFlag == null">
+      del_flag = 0
+    </if>
+    <if test="delFlag != null">
+      del_flag = #{delFlag}
+    </if>
+    <if test="releaseFlag != null and releaseFlag != 2">
       AND
       release_flag = #{releaseFlag}
     </if>
@@ -188,8 +193,13 @@
     count(*) as amount
     FROM post_info
     WHERE
-    del_flag = 0
-    <if test="releaseFlag != null">
+    <if test="delFlag == null">
+      del_flag = 0
+    </if>
+    <if test="delFlag != null">
+      del_flag = #{delFlag}
+    </if>
+    <if test="releaseFlag != null and releaseFlag != 2">
       AND
       release_flag = #{releaseFlag}
     </if>

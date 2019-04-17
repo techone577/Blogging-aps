@@ -161,7 +161,7 @@ public class PostBusiness {
             return ResponseBuilder.build(true,"文章列表为空");
         Integer minId = entities.stream().min(Comparator.comparing(PostInfoEntity::getId)).get().getId();
         List<HomePagePostListDTO> homePagePostListDTOS = buildHomePagePostRespDTO(entities);
-        Integer totalAmount = postService.queryPostCount(queryDTO.getReleaseFlag());
+        Integer totalAmount = postService.queryPostCount(queryDTO.getReleaseFlag(), queryDTO.getDelFlag());
         PostListQueryRespDTO respDTO = new PostListQueryRespDTO(){
             {
                 setPostList(homePagePostListDTOS);
