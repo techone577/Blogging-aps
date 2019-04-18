@@ -13,6 +13,7 @@ import com.blogging.aps.support.utils.DateUtils;
 import com.blogging.aps.support.utils.IdGenerator;
 import com.blogging.aps.support.utils.MarkDownUtils;
 import com.blogging.aps.support.utils.ResponseBuilder;
+import com.github.pagehelper.PageInfo;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -157,15 +158,16 @@ public class PostBusiness {
         if(null == queryDTO)
             return ResponseBuilder.build(true,"分页查询条件为空");
         List<PostInfoEntity> entities = postService.queryPostListByPaging(queryDTO);
-        if(null == entities || entities.size() == 0)
+        PageInfo pageInfo = new PageInfo(entities);
+        if(null == pageInfo || pageInfo.getSize() == 0)
             return ResponseBuilder.build(true,"文章列表为空");
         Integer minId = entities.stream().min(Comparator.comparing(PostInfoEntity::getId)).get().getId();
-        List<HomePagePostListDTO> homePagePostListDTOS = buildHomePagePostRespDTO(entities);
+        List<HomePagePostListDTO> homePagePostListDTOS = buildHomePagePostRespDTO(pageInfo.getList());
         Integer totalAmount = postService.queryPostCount(queryDTO.getReleaseFlag(), queryDTO.getDelFlag());
         PostListQueryRespDTO respDTO = new PostListQueryRespDTO(){
             {
                 setPostList(homePagePostListDTOS);
-                setTotalNum(totalAmount);
+                setTotalNum(pageInfo.getTotal());
                 setTagInfoList(queryTagInfoList());
                 setMinId(minId);
             }

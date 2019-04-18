@@ -12,6 +12,7 @@ import com.blogging.aps.service.post.PostService;
 import com.blogging.aps.support.strategy.FactoryList;
 import com.blogging.aps.support.utils.DateUtils;
 import com.blogging.aps.support.utils.ResponseBuilder;
+import com.github.pagehelper.PageInfo;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,10 +20,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -91,6 +89,15 @@ public class BMBusiness {
         return ResponseBuilder.build(true,respDTOS);
     }
 
+    public Response queryTagList(){
+        List<TagEntity> list = tagService.queryTagList();
+        if(null == list || list.size() == 0)
+            return ResponseBuilder.build(true,null);
+        List<String> namList = list.stream().map(item-> item.getTagName()).collect(Collectors.toList());
+        Map<String,Object> map = new HashMap<>();
+        map.put("tag",namList);
+        return ResponseBuilder.build(true,map);
+    }
     private List<BMTagQueryRespDTO> buildTagRespDTO(List<TagEntity> tagEntities, List<TagAmountDTO> tagAmountDTOS) {
         List<BMTagQueryRespDTO> respDTOS = new ArrayList<>();
         for (int i = 0; i < tagEntities.size(); ++i) {
@@ -106,6 +113,12 @@ public class BMBusiness {
         return respDTOS;
     }
 
+
+    /**
+     * 查询blog 编辑器使用
+     * @param reqDTO
+     * @return
+     */
     public Response queryBlog(PostQueryReqDTO reqDTO){
         String postId = reqDTO.getPostId();
         PostInfoEntity postInfoEntity = postService.queryPostByPostId(postId);
@@ -123,5 +136,115 @@ public class BMBusiness {
             }
         };
         return ResponseBuilder.build(true,respDTO);
+    }
+
+    /**
+     * 查询文章列表（包括未发布、已发布，不包含回收站）
+     * @param queryDTO
+     * @return
+     */
+    public Response queryPostList(BMPostListQueryDTO queryDTO) {
+        List<PostInfoEntity> entities = postService.BMQueryPostList(queryDTO);
+        PageInfo pageInfo = new PageInfo(entities);
+        return buildPostTable(pageInfo);
+    }
+
+
+    /**
+     * 查询草稿箱
+     * @param queryDTO
+     * @return
+     */
+    public Response queryDrafts(BMDraftsQueryDTO queryDTO) {
+        List<PostInfoEntity> entities = postService.BMDraftsQuery(queryDTO);
+        PageInfo pageInfo = new PageInfo(entities);
+        return buildPostTable(pageInfo);
+    }
+
+
+    /**
+     * 查询回收站
+     * @param queryDTO
+     * @return
+     */
+    public Response queryRubbish(BMRubbishQueryDTO queryDTO){
+        List<PostInfoEntity> entities = postService.BMRubbishQuery(queryDTO);
+        PageInfo pageInfo = new PageInfo(entities);
+        return buildPostTable(pageInfo);
+
+    }
+
+    private Response buildPostTable(PageInfo pageInfo) {
+        List<HomePagePostListDTO> homePagePostListDTOS = postBusiness.buildHomePagePostRespDTO(pageInfo.getList());
+        PostListQueryRespDTO resp = new PostListQueryRespDTO() {
+            {
+                setPostList(homePagePostListDTOS);
+                setTotalNum(pageInfo.getTotal());
+            }
+        };
+        return ResponseBuilder.build(true, resp);
+    }
+
+    /**
+     * 文章发布
+     */
+    public Response releasePost(BMPostModifyReqDTO reqDTO) {
+        if (null == reqDTO || StringUtils.isBlank(reqDTO.getPostId()))
+            return ResponseBuilder.build(false, "请求PostId为空");
+        PostInfoEntity postInfoEntity = postService.queryPostByPostId(reqDTO.getPostId());
+        if (null == postInfoEntity)
+            return ResponseBuilder.build(false, "文章不存在");
+        if (1 == postInfoEntity.getReleaseFlag() || 1 == postInfoEntity.getDelFlag())
+            return ResponseBuilder.build(false, "文章状态异常");
+        PostInfoEntity entity = new PostInfoEntity() {
+            {
+                setPostId(reqDTO.getPostId());
+                setReleaseFlag(1);
+            }
+        };
+        postService.updatePostByPostId(entity);
+        return ResponseBuilder.build(true, "发布成功");
+    }
+
+    /**
+     * 文章下线
+     */
+    public Response offlinePost(BMPostModifyReqDTO reqDTO) {
+        if (null == reqDTO || StringUtils.isBlank(reqDTO.getPostId()))
+            return ResponseBuilder.build(false, "请求PostId为空");
+        PostInfoEntity postInfoEntity = postService.queryPostByPostId(reqDTO.getPostId());
+        if (null == postInfoEntity)
+            return ResponseBuilder.build(false, "文章不存在");
+        if (0 == postInfoEntity.getReleaseFlag() || 1 == postInfoEntity.getDelFlag())
+            return ResponseBuilder.build(false, "文章状态异常");
+        PostInfoEntity entity = new PostInfoEntity() {
+            {
+                setPostId(reqDTO.getPostId());
+                setReleaseFlag(0);
+            }
+        };
+        postService.updatePostByPostId(entity);
+        return ResponseBuilder.build(true, "下线成功");
+    }
+    /**
+     * 文章逻辑删除
+     */
+    public Response removePost(BMPostModifyReqDTO reqDTO) {
+        if (null == reqDTO || StringUtils.isBlank(reqDTO.getPostId()))
+            return ResponseBuilder.build(false, "请求PostId为空");
+        PostInfoEntity postInfoEntity = postService.queryPostByPostIdWithoutDel(reqDTO.getPostId());
+        if (null == postInfoEntity)
+            return ResponseBuilder.build(false, "文章不存在");
+        if (0 == postInfoEntity.getDelFlag())
+            return ResponseBuilder.build(false, "文章状态异常");
+        PostInfoEntity entity = new PostInfoEntity() {
+            {
+                setPostId(reqDTO.getPostId());
+                setReleaseFlag(0);
+                setDelFlag(1);
+            }
+        };
+        postService.updatePostByPostId(entity);
+        return ResponseBuilder.build(true, "移动成功");
     }
 }

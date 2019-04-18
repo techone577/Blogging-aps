@@ -123,6 +123,14 @@
     post_id = #{postId}
   </select>
 
+  <select id="selectPostByPostIdWithoutDel" resultMap="BaseResultMap" parameterType="java.lang.String">
+    SELECT
+    <include refid="Base_Column_List"/>
+    FROM post_info
+    WHERE
+    post_id = #{postId}
+  </select>
+
   <select id="selectPreviousPost" resultMap="BaseResultMap">
     SELECT
     <include refid="Base_Column_List"/>
@@ -165,7 +173,6 @@
       release_flag = #{releaseFlag}
     </if>
     ORDER BY id DESC
-    limit #{offSet},#{pageSize}
   </select>
 
   <select id="selectPostByIdList" resultMap="BaseResultMap">
@@ -204,4 +211,49 @@
       release_flag = #{releaseFlag}
     </if>
   </select>
+
+  <select id="selectDrafts" resultMap="BaseResultMap">
+    SELECT
+    <include refid="Base_Column_List"/>
+    FROM post_info
+    WHERE
+      del_flag = 0
+    <if test="releaseFlag != null">
+      AND release_flag = #{releaseFlag}
+    </if>
+  </select>
+
+  <select id="selectRubbish" resultMap="BaseResultMap">
+    SELECT
+    <include refid="Base_Column_List"/>
+    FROM post_info
+    WHERE
+    del_flag = #{delFlag}
+  </select>
+
+  <update id="updateByPrimaryKeySelective" parameterType="com.blogging.aps.model.entity.post.PostInfoEntity" >
+    update post_info
+    <set >
+      <if test="title != null" >
+        title = #{title},
+      </if>
+      <if test="category != null" >
+        category = #{category},
+      </if>
+      <if test="releaseFlag != null" >
+        release_flag = #{releaseFlag},
+      </if>
+      <if test="summary != null" >
+        summary = #{summary},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime},
+      </if>
+      <if test="delFlag != null" >
+        del_flag = #{delFlag},
+      </if>
+    </set>
+    where post_id = #{postId}
+  </update>
+
 </mapper>

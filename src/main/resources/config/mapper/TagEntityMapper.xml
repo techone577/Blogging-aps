@@ -81,4 +81,12 @@
     </if>
     ORDER BY id
   </select>
+
+  <select id="selectTagList" resultMap="BaseResultMap">
+    SELECT
+    <include refid="Base_Column_List"/>
+    FROM tag
+    WHERE
+    del_flag = 0
+  </select>
 </mapper>

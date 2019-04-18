@@ -13,4 +13,6 @@ public interface TagEntityMapper {
     List<TagEntity> selectTagByName(@Param("tagName") String name);
 
     List<TagEntity> selectTagByIdList(@Param("idList") List<Integer> idList);
+
+    List<TagEntity> selectTagList();
 }

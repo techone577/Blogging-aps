@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.blogging.aps.persistence.PostTagWrapperMapper">
+    <resultMap id="PostBaseResultMap" type="com.blogging.aps.model.entity.post.PostInfoEntity">
+        <result column="id" property="id"/>
+        <result column="post_id" property="postId"/>
+        <result column="member_id" property="memberId"/>
+        <result column="title" property="title"/>
+        <result column="category" property="category"/>
+        <result column="passage_id" property="passageId"/>
+        <result column="release_flag" property="releaseFlag"/>
+        <result column="del_flag" property="delFlag"/>
+        <result column="add_time" property="addTime"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="summary" property="summary"/>
+    </resultMap>
+    <sql id="PostBase_Column_List">
+        id, post_id, member_id, title, category, passage_id, release_flag, del_flag, add_time, update_time, summary
+    </sql>
+
+    <select id="selectPostByParams" resultMap="PostBaseResultMap">
+        SELECT
+        <include refid="PostBase_Column_List"/>
+        FROM post_info
+        <where>
+            del_flag = 0
+            <if test="title != null and title != ''">
+                AND title = #{title}
+            </if>
+            <if test="tags != null and tags.size() > 0">
+                AND post_id in(
+                select b.post_id from tag a inner join tag_relation b on a.id = b.tag_id
+                and a.tag_name in
+                <foreach collection="tags" item="item" open="(" close=")"
+                         separator=",">
+                    #{item}
+                </foreach>
+                )
+            </if>
+        </where>
+        ORDER BY id DESC
+
+    </select>
+</mapper>

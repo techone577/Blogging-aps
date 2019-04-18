@@ -2,6 +2,7 @@ package com.blogging.aps.persistence;
 
 
 import com.blogging.aps.model.dto.TagAmountDTO;
+import com.blogging.aps.model.entity.post.TagEntity;
 import com.blogging.aps.model.entity.post.TagRelationEntity;
 import org.apache.ibatis.annotations.Param;
 
@@ -16,7 +17,7 @@ public interface TagRelationEntityMapper {
 
     List<TagAmountDTO> selectTagAmount();
 
-    List<TagRelationEntity> selectByTagIdPaging(@Param("tagId") Integer tagId,@Param("offSet") Integer offSet, @Param("pageSize") Integer pageSize);
+    List<TagRelationEntity> selectByTagIdPaging(@Param("tagId") Integer tagId);
 
     List<TagRelationEntity> selectByTagId(@Param("tagId") Integer tagId);
 

@@ -12,6 +12,7 @@ import com.blogging.aps.model.entity.post.TagRelationEntity;
 import com.blogging.aps.service.TagService;
 import com.blogging.aps.service.post.PostService;
 import com.blogging.aps.support.utils.ResponseBuilder;
+import com.github.pagehelper.PageInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,8 +44,8 @@ public class TagPostListQueryBusiness extends AbstractPostListQueryBusiness {
             return ResponseBuilder.build(true,"tag不存在！");
         }
         List<TagRelationEntity> tagRelationEntities = tagService.queryTagReLationByTagIdPaging(tagEntities.get(0).getId(),
-                queryDTO.getPageNum() * queryDTO.getPageSize(), queryDTO.getPageSize());
-        Integer size = tagService.queryTagRelationByTagId(tagEntities.get(0).getId()).size();
+                queryDTO.getPageNum(), queryDTO.getPageSize());
+        PageInfo pageInfo = new PageInfo(tagRelationEntities);
         List<String> postIds = tagRelationEntities
                 .stream().map(i->i.getPostId()).collect(Collectors.toList());
         List<PostInfoEntity> postInfoEntities = postService.queryPostListByIdList(postIds,queryDTO.getReleaseFlag());
@@ -52,7 +53,7 @@ public class TagPostListQueryBusiness extends AbstractPostListQueryBusiness {
         PostListQueryRespDTO respDTO = new PostListQueryRespDTO(){
             {
                 setPostList(homePagePostListDTOS);
-                setTotalNum(size);
+                setTotalNum(pageInfo.getTotal());
                 setTagInfoList(postBusiness.queryTagInfoList());
             }
         };

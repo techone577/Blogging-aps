@@ -8,7 +8,7 @@ public class PostListQueryRespDTO {
 
     private List<TagInfoDTO> tagInfoList;
 
-    private Integer totalNum;
+    private Long totalNum;
 
     private Integer minId;
 
@@ -28,11 +28,11 @@ public class PostListQueryRespDTO {
         this.tagInfoList = tagInfoList;
     }
 
-    public Integer getTotalNum() {
+    public Long getTotalNum() {
         return totalNum;
     }
 
-    public void setTotalNum(Integer totalNum) {
+    public void setTotalNum(Long totalNum) {
         this.totalNum = totalNum;
     }
 

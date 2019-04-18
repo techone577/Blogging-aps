@@ -15,14 +15,21 @@ public interface PostInfoEntityMapper {
 
     PostInfoEntity selectPostByPostId(@Param("postId") String postId);
 
-    PostInfoEntity selectPreviousPost(@Param("id")Integer id,@Param("postId")String postId);
+    PostInfoEntity selectPostByPostIdWithoutDel(@Param("postId") String postId);
 
-    PostInfoEntity selectNextPost(@Param("id")Integer id,@Param("postId")String postId);
+    PostInfoEntity selectPreviousPost(@Param("id") Integer id, @Param("postId") String postId);
 
-    List<PostInfoEntity> selectPostListByPaging(@Param("offSet")Integer offSet,@Param("pageSize") Integer pageSize
-            ,@Param("releaseFlag") Integer releaseFlag, @Param("delFlag")Integer delFlag);
+    PostInfoEntity selectNextPost(@Param("id") Integer id, @Param("postId") String postId);
+
+    List<PostInfoEntity> selectPostListByPaging(@Param("releaseFlag") Integer releaseFlag, @Param("delFlag") Integer delFlag);
 
     List<PostInfoEntity> selectPostByIdList(@Param("postIdList") List<String> postIdList, @Param("releaseFlag") Integer releaseFlag);
 
     Integer selectPostCount(@Param("releaseFlag") Integer releaseFlag, @Param("delFlag") Integer delFlag);
+
+    List<PostInfoEntity> selectDrafts(@Param("releaseFlag") Integer releaseFlag);
+
+    List<PostInfoEntity> selectRubbish(@Param("delFlag") Integer delFlag);
+
+    void updateByPrimaryKeySelective(PostInfoEntity postInfoEntity);
 }
