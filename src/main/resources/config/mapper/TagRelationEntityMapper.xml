@@ -81,6 +81,14 @@
     post_id = #{postId}
   </select>
 
+  <select id="selectByPostIdWithoutDel" resultMap="BaseResultMap" parameterType="java.lang.String">
+    SELECT
+    <include refid="Base_Column_List"/>
+    FROM tag_relation
+    WHERE
+    post_id = #{postId}
+  </select>
+
   <select id="selectTagAmount" resultMap="TagAmountResultMap">
     SELECT
     <include refid="Amount_Statistic_List"/>
@@ -120,4 +128,23 @@
     AND
     tag_id = #{tagId}
   </select>
+
+  <update id="updateByPostIdSelective" parameterType="com.blogging.aps.model.entity.post.TagRelationEntity" >
+    update tag_relation
+    <set >
+      <if test="tagId != null" >
+        tag_id = #{tagId},
+      </if>
+      <if test="delFlag != null" >
+        del_flag = #{delFlag},
+      </if>
+      <if test="addTime != null" >
+        add_time = #{addTime},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime},
+      </if>
+    </set>
+    where post_id = #{postId}
+  </update>
 </mapper>

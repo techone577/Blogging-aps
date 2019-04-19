@@ -15,6 +15,8 @@ public interface TagRelationEntityMapper {
 
     List<TagRelationEntity> selectByPostId(@Param("postId") String postId);
 
+    List<TagRelationEntity> selectByPostIdWithoutDel(@Param("postId") String postId);
+
     List<TagAmountDTO> selectTagAmount();
 
     List<TagRelationEntity> selectByTagIdPaging(@Param("tagId") Integer tagId);
@@ -22,4 +24,6 @@ public interface TagRelationEntityMapper {
     List<TagRelationEntity> selectByTagId(@Param("tagId") Integer tagId);
 
     List<TagAmountDTO> selectAllTagAmount();
+
+    void updateByPostIdSelective(TagRelationEntity tagRelationEntity);
 }

@@ -6,15 +6,32 @@ package com.blogging.aps.model.enums;
  */
 
 public enum ErrorCodeEnum {
-    //通用错误码 10950001-10950099
 
-    NO_SERVICE_AVAILABLR(0, "服务不可用"),;
+    /**
+     * BSP error
+     */
+    NO_SERVICE_AVAILABLR(0, "服务不可用"),
+
+    /**
+     * System error
+     */
+    UNKNOWN(10000, "未知异常"),
+    PARAM_ILLEGAL_ERROR(10001, "参数非法"),
+    ERROR_REPEAT_ACTION(10002, "重复执行"),
+    SYSTEM_ERROR(10003, "系统异常"),
+    INTERFACE_ERROR(10004, "接口异常"),
+    DB_ERROR(10005, "数据库异常"),
+
+    /**
+     * BM error
+     */
+    POST_STATE_ERROR(30000, "状态异常");
 
     private int code;
 
     private String msg;
 
-    ErrorCodeEnum (int code, String msg) {
+    ErrorCodeEnum(int code, String msg) {
         this.code = code;
         this.msg = msg;
     }

@@ -242,6 +242,32 @@ public class PostBusiness {
     }
 
     public List<HomePagePostListDTO> buildHomePagePostRespDTO(List<PostInfoEntity> postInfoEntities) {
+        List<HomePagePostListDTO> respDTOS = buildPostListDTO(postInfoEntities);
+        respDTOS.stream().forEach(item->{
+            item.setAddTime(DateUtils.DateTimeToDate(item.getAddTime()));
+        });
+        for (HomePagePostListDTO homePagePostListDTO : respDTOS) {
+            List<String> tagList = getPostTags(homePagePostListDTO.getPostId());
+            //TODO 可以缓存tag列表
+            if (null == tagList || tagList.size() == 0) {
+                homePagePostListDTO.setTagList(new ArrayList<>());
+                continue;
+            }
+            homePagePostListDTO.setTagList(tagList);
+        }
+        return respDTOS;
+    }
+
+
+    public List<HomePagePostListDTO> buildBMPostRespDTO(List<PostInfoEntity> postInfoEntities) {
+        List<HomePagePostListDTO> respDTOS = buildPostListDTO(postInfoEntities);
+        respDTOS.stream().forEach(item->{
+            item.setTagList(getPostTagsWithoutDel(item.getPostId()));
+        });
+        return respDTOS;
+    }
+
+    private List<HomePagePostListDTO> buildPostListDTO(List<PostInfoEntity> postInfoEntities){
         List<HomePagePostListDTO> respDTOS = new ArrayList<>();
         for (PostInfoEntity postInfoEntity : postInfoEntities) {
             HomePagePostListDTO respDTO = new HomePagePostListDTO() {
@@ -254,13 +280,6 @@ public class PostBusiness {
                     setUpdateTime(DateUtils.formatDateTime(postInfoEntity.getUpdateTime()));
                 }
             };
-            List<String> tagList = getPostTags(postInfoEntity.getPostId());
-            //TODO 可以缓存tag列表
-            if (null == tagList || tagList.size() == 0) {
-                respDTO.setTagList(new ArrayList<>());
-                respDTOS.add(respDTO);
-            }
-            respDTO.setTagList(tagList);
             respDTOS.add(respDTO);
         }
         return respDTOS;
@@ -269,6 +288,18 @@ public class PostBusiness {
     public List<String> getPostTags(String postId) {
 
         List<Integer> tagIdList = tagService.queryByPostId(postId)
+                .stream().map(item -> item.getTagId()).collect(Collectors.toList());
+        if (null == tagIdList || tagIdList.size() == 0)
+            return null;
+        List<String> tagList = tagService.queryByTagIdList(tagIdList)
+                .stream().map(item -> item.getTagName()).collect(Collectors.toList());
+        return tagList;
+    }
+
+    //BM查询所有tagrelation无论有没有删除标志
+    public List<String> getPostTagsWithoutDel(String postId){
+
+        List<Integer> tagIdList = tagService.queryByPostIdWithoutDel(postId)
                 .stream().map(item -> item.getTagId()).collect(Collectors.toList());
         if (null == tagIdList || tagIdList.size() == 0)
             return null;

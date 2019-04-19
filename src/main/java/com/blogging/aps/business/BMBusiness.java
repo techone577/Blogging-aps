@@ -7,8 +7,11 @@ import com.blogging.aps.model.entity.Response;
 import com.blogging.aps.model.entity.post.PassageEntity;
 import com.blogging.aps.model.entity.post.PostInfoEntity;
 import com.blogging.aps.model.entity.post.TagEntity;
+import com.blogging.aps.model.entity.post.TagRelationEntity;
+import com.blogging.aps.model.enums.ErrorCodeEnum;
 import com.blogging.aps.service.TagService;
 import com.blogging.aps.service.post.PostService;
+import com.blogging.aps.support.exception.UnifiedException;
 import com.blogging.aps.support.strategy.FactoryList;
 import com.blogging.aps.support.utils.DateUtils;
 import com.blogging.aps.support.utils.ResponseBuilder;
@@ -175,7 +178,7 @@ public class BMBusiness {
     }
 
     private Response buildPostTable(PageInfo pageInfo) {
-        List<HomePagePostListDTO> homePagePostListDTOS = postBusiness.buildHomePagePostRespDTO(pageInfo.getList());
+        List<HomePagePostListDTO> homePagePostListDTOS = postBusiness.buildBMPostRespDTO(pageInfo.getList());
         PostListQueryRespDTO resp = new PostListQueryRespDTO() {
             {
                 setPostList(homePagePostListDTOS);
@@ -203,6 +206,7 @@ public class BMBusiness {
             }
         };
         postService.updatePostByPostId(entity);
+        modifyTagRelation(reqDTO.getPostId(),0);
         return ResponseBuilder.build(true, "发布成功");
     }
 
@@ -224,6 +228,7 @@ public class BMBusiness {
             }
         };
         postService.updatePostByPostId(entity);
+        modifyTagRelation(reqDTO.getPostId(),1);
         return ResponseBuilder.build(true, "下线成功");
     }
     /**
@@ -235,7 +240,7 @@ public class BMBusiness {
         PostInfoEntity postInfoEntity = postService.queryPostByPostIdWithoutDel(reqDTO.getPostId());
         if (null == postInfoEntity)
             return ResponseBuilder.build(false, "文章不存在");
-        if (0 == postInfoEntity.getDelFlag())
+        if (1 == postInfoEntity.getDelFlag())
             return ResponseBuilder.build(false, "文章状态异常");
         PostInfoEntity entity = new PostInfoEntity() {
             {
@@ -245,6 +250,41 @@ public class BMBusiness {
             }
         };
         postService.updatePostByPostId(entity);
+        //逻辑删除tag-post对应
+        modifyTagRelation(reqDTO.getPostId(),1);
         return ResponseBuilder.build(true, "移动成功");
+    }
+
+    public Response recoverPost(BMPostModifyReqDTO reqDTO) {
+        if (null == reqDTO || StringUtils.isBlank(reqDTO.getPostId()))
+            return ResponseBuilder.build(false, "请求PostId为空");
+        PostInfoEntity postInfoEntity = postService.queryPostByPostIdWithoutDel(reqDTO.getPostId());
+        if (null == postInfoEntity)
+            return ResponseBuilder.build(false, "文章不存在");
+        if (0 == postInfoEntity.getDelFlag())
+           throw new UnifiedException(ErrorCodeEnum.POST_STATE_ERROR);
+        PostInfoEntity entity = new PostInfoEntity() {
+            {
+                setPostId(reqDTO.getPostId());
+                setReleaseFlag(0);
+                setDelFlag(0);
+            }
+        };
+        postService.updatePostByPostId(entity);
+        //恢复tag-post对应
+        modifyTagRelation(reqDTO.getPostId(),0);
+        return ResponseBuilder.build(true, "恢复成功");
+    }
+
+    //删除or重建tag-post关系
+    private void modifyTagRelation(String postId,Integer delFlag){
+        TagRelationEntity tagRelationEntity = new TagRelationEntity(){
+            {
+                setPostId(postId);
+                setDelFlag(delFlag);
+                setUpdateTime(new Date());
+            }
+        };
+        tagService.updateTagRelation(tagRelationEntity);
     }
 }

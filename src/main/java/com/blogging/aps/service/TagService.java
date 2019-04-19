@@ -40,6 +40,12 @@ public class TagService {
 
     }
 
+    public List<TagRelationEntity> queryByPostIdWithoutDel(String postId) {
+        List<TagRelationEntity> relationEntities = tagRelationEntityMapper.selectByPostIdWithoutDel(postId);
+        return relationEntities;
+
+    }
+
     public List<TagEntity> queryByTagIdList(List<Integer> tagIdList) {
         return tagEntityMapper.selectTagByIdList(tagIdList);
     }
@@ -63,5 +69,9 @@ public class TagService {
 
     public List<TagEntity> queryTagList(){
         return tagEntityMapper.selectTagList();
+    }
+
+    public void updateTagRelation(TagRelationEntity tagRelationEntity){
+        tagRelationEntityMapper.updateByPostIdSelective(tagRelationEntity);
     }
 }

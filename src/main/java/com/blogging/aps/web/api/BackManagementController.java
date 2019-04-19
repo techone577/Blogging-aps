@@ -143,8 +143,20 @@ public class BackManagementController {
     @ServiceInfo(name = "Blogging.APS.BMController.postRemove", description = "文章移动至回收站")
     public Response removePost(@Json BMPostModifyReqDTO reqDTO) {
         LOG.info("（BM）移动文章入参:{}", JsonUtil.toString(reqDTO));
-        Response resp = bmBusiness.releasePost(reqDTO);
+        Response resp = bmBusiness.removePost(reqDTO);
         LOG.info("（BM）移动文章出参:{}", JsonUtil.toString(resp));
+        return resp;
+    }
+
+    /**
+     * 文章从回收站恢复
+     */
+    @RequestMapping(value = "/postRecover", method = RequestMethod.POST)
+    @ServiceInfo(name = "Blogging.APS.BMController.postRecover", description = "文章从回收站恢复")
+    public Response recoverPost(@Json BMPostModifyReqDTO reqDTO) {
+        LOG.info("（BM）恢复文章入参:{}", JsonUtil.toString(reqDTO));
+        Response resp = bmBusiness.recoverPost(reqDTO);
+        LOG.info("（BM）恢复文章出参:{}", JsonUtil.toString(resp));
         return resp;
     }
 }

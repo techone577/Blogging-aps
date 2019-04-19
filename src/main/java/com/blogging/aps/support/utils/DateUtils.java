@@ -24,4 +24,10 @@ public class DateUtils {
         LocalDateTime localDateTime = instant.atZone(zoneId).toLocalDateTime();
         return dtf.format(localDateTime);
     }
+
+    public static String DateTimeToDate(String str) {
+        DateTimeFormatter dtDtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        LocalDate date = LocalDate.parse(str, dtDtf);
+        return date.toString();
+    }
 }
