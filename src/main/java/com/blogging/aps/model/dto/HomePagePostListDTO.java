@@ -18,6 +18,8 @@ public class HomePagePostListDTO {
 
     private List<String> tagList;
 
+    private StatisticInfo statisticInfo;
+
     public String getPostId() {
         return postId;
     }
@@ -72,5 +74,13 @@ public class HomePagePostListDTO {
 
     public void setTagList(List<String> tagList) {
         this.tagList = tagList;
+    }
+
+    public StatisticInfo getStatisticInfo() {
+        return statisticInfo;
+    }
+
+    public void setStatisticInfo(StatisticInfo statisticInfo) {
+        this.statisticInfo = statisticInfo;
     }
 }

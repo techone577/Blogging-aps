@@ -9,7 +9,7 @@ import com.blogging.aps.model.entity.post.PostInfoEntity;
 import com.blogging.aps.model.entity.post.TagEntity;
 import com.blogging.aps.model.entity.post.TagRelationEntity;
 import com.blogging.aps.model.enums.ErrorCodeEnum;
-import com.blogging.aps.service.TagService;
+import com.blogging.aps.service.post.TagService;
 import com.blogging.aps.service.post.PostService;
 import com.blogging.aps.support.exception.UnifiedException;
 import com.blogging.aps.support.strategy.FactoryList;
@@ -19,7 +19,6 @@ import com.github.pagehelper.PageInfo;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

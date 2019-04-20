@@ -20,6 +20,8 @@ public class BlogQueryRespDTO {
 
     private String TOC;
 
+    private StatisticInfo statisticInfo;
+
     public String getPostId() {
         return postId;
     }
@@ -82,5 +84,13 @@ public class BlogQueryRespDTO {
 
     public void setTOC(String TOC) {
         this.TOC = TOC;
+    }
+
+    public StatisticInfo getStatisticInfo() {
+        return statisticInfo;
+    }
+
+    public void setStatisticInfo(StatisticInfo statisticInfo) {
+        this.statisticInfo = statisticInfo;
     }
 }

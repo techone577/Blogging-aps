@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.BoundValueOperations;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.stereotype.Service;
 
 import java.util.concurrent.TimeUnit;
 
@@ -12,6 +13,7 @@ import java.util.concurrent.TimeUnit;
  * @author techoneduan
  * @date 2019/1/4
  */
+@Service
 public class DistributeLockImpl implements DistributeLock {
     private static final Logger LOG = LoggerFactory.getLogger(DistributeLockImpl.class);
 

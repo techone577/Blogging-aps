@@ -9,6 +9,7 @@ import com.blogging.aps.model.dto.PostQueryReqDTO;
 import com.blogging.aps.model.entity.Response;
 import com.blogging.aps.model.entity.post.PostAddReqEntity;
 import com.blogging.aps.support.annotation.Json;
+import com.blogging.aps.support.annotation.PostStatistic;
 import com.blogging.aps.support.annotation.ServiceInfo;
 import com.blogging.aps.support.strategy.FactoryList;
 import com.blogging.aps.support.utils.JsonUtil;
@@ -44,6 +45,7 @@ public class PostController {
      */
     @RequestMapping(value = "/query", method = RequestMethod.POST)
     @ServiceInfo(name = "Blogging.APS.PostController.query", description = "文章信息查询")
+    @PostStatistic
     public Response postQuery (@Json PostQueryReqDTO reqDTO) {
         LOG.info("文章查询入参:{}",JsonUtil.toString(reqDTO));
         Response resp = postBusiness.queryBlog(reqDTO);

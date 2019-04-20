@@ -2,12 +2,9 @@ package com.blogging.aps.business;
 
 import com.blogging.aps.model.dto.*;
 import com.blogging.aps.model.entity.Response;
-import com.blogging.aps.model.entity.post.PassageEntity;
-import com.blogging.aps.model.entity.post.PostInfoEntity;
-import com.blogging.aps.model.entity.post.TagEntity;
-import com.blogging.aps.model.entity.post.TagRelationEntity;
-import com.blogging.aps.model.entity.post.PostAddReqEntity;
-import com.blogging.aps.service.TagService;
+import com.blogging.aps.model.entity.post.*;
+import com.blogging.aps.service.post.StatisticService;
+import com.blogging.aps.service.post.TagService;
 import com.blogging.aps.service.post.PostService;
 import com.blogging.aps.support.utils.DateUtils;
 import com.blogging.aps.support.utils.IdGenerator;
@@ -41,6 +38,9 @@ public class PostBusiness {
 
     @Autowired
     private TagService tagService;
+
+    @Autowired
+    private StatisticService statisticService;
 
 
     /**
@@ -146,9 +146,59 @@ public class PostBusiness {
         };
         respDTO.setPreviousPost(previousDTO);
         respDTO.setNextPost(nextDTO);
+        StatisticInfo statisticInfo = getStatisticInfo(reqDTO.getPostId());
+        respDTO.setStatisticInfo(statisticInfo);
         return ResponseBuilder.build(true, respDTO);
     }
 
+
+    /**
+     * 统计信息
+     */
+    private StatisticInfo getStatisticInfo(String postId){
+        List<StatisticEntity> statisticEntities = statisticService.queryByPostId(postId);
+        StatisticInfo statisticInfo = new StatisticInfo();
+        if(null == statisticEntities || statisticEntities.size() == 0) {
+            statisticInfo.setPageView(0l);
+            statisticInfo.setReadTime("No One Read");
+        }else{
+            statisticInfo.setPageView(statisticEntities.get(0).getStatistic());
+            statisticInfo.setReadTime(caculateReadTime(statisticEntities.get(0).getUpdateTime()));
+        }
+        return statisticInfo;
+    }
+
+
+    private String caculateReadTime(Date date) {
+        long timeMillions = date.getTime();
+        long now = System.currentTimeMillis();
+        long minus = now - timeMillions;
+        StringBuilder sb = new StringBuilder();
+        long minute = minus / 60000;
+        if (minute > 0 && minute < 60) {
+            return sb.append(minute + " minutes read").toString();
+        }
+        long second = minus / 1000;
+        if (second > 0 && second < 60) {
+            return sb.append(second + " seconds read").toString();
+        }
+        long hour = minus / 3600000;
+        if (hour > 0 && hour < 24) {
+            return sb.append(hour + " hours read").toString();
+        }
+        long day = hour / 24;
+        if (day > 0 && day < 30) {
+            return sb.append(day + " days read").toString();
+        }
+        long month = day / 30;
+        if (month > 0 && month < 12) {
+            return sb.append(month + " months read").toString();
+        }
+        if (month > 12) {
+            return sb.append(month / 12 + " years read").toString();
+        }
+        return sb.append(minus + " mills read").toString();
+    }
     /**
      * 分页查询所有博客列表
      * @param queryDTO
@@ -245,6 +295,7 @@ public class PostBusiness {
         List<HomePagePostListDTO> respDTOS = buildPostListDTO(postInfoEntities);
         respDTOS.stream().forEach(item->{
             item.setAddTime(DateUtils.DateTimeToDate(item.getAddTime()));
+            item.setUpdateTime(DateUtils.DateTimeToDate(item.getUpdateTime()));
         });
         for (HomePagePostListDTO homePagePostListDTO : respDTOS) {
             List<String> tagList = getPostTags(homePagePostListDTO.getPostId());
@@ -280,6 +331,8 @@ public class PostBusiness {
                     setUpdateTime(DateUtils.formatDateTime(postInfoEntity.getUpdateTime()));
                 }
             };
+            StatisticInfo statisticInfo = getStatisticInfo(postInfoEntity.getPostId());
+            respDTO.setStatisticInfo(statisticInfo);
             respDTOS.add(respDTO);
         }
         return respDTOS;

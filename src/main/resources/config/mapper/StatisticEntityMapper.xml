@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.blogging.aps.persistence.StatisticEntityMapper" >
+  <resultMap id="BaseResultMap" type="com.blogging.aps.model.entity.post.StatisticEntity" >
+    <result column="id" property="id"/>
+    <result column="post_id" property="postId"/>
+    <result column="statistic" property="statistic"/>
+    <result column="add_time" property="addTime"/>
+    <result column="update_time" property="updateTime"/>
+    <result column="del_flag" property="delFlag"/>
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, post_id, statistic, add_time, update_time, del_flag
+  </sql>
+  <insert id="insert" parameterType="com.blogging.aps.model.entity.post.StatisticEntity" >
+    insert into statistic (id, post_id, statistic, 
+      add_time, update_time, del_flag
+      )
+    values (#{id,jdbcType=INTEGER}, #{postId,jdbcType=VARCHAR}, #{statistic,jdbcType=BIGINT}, 
+      #{addTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}, #{delFlag,jdbcType=TINYINT}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.blogging.aps.model.entity.post.StatisticEntity" >
+    insert into statistic
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="postId != null" >
+        post_id,
+      </if>
+      <if test="statistic != null" >
+        statistic,
+      </if>
+      <if test="addTime != null" >
+        add_time,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+      <if test="delFlag != null" >
+        del_flag,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="postId != null" >
+        #{postId,jdbcType=VARCHAR},
+      </if>
+      <if test="statistic != null" >
+        #{statistic,jdbcType=BIGINT},
+      </if>
+      <if test="addTime != null" >
+        #{addTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="delFlag != null" >
+        #{delFlag,jdbcType=TINYINT},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateSelective" parameterType="com.blogging.aps.model.entity.post.StatisticEntity" >
+    update statistic
+    <set >
+      <if test="statistic != null" >
+        statistic = #{statistic},
+      </if>
+      <if test="addTime != null" >
+        add_time = #{addTime},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime},
+      </if>
+      <if test="delFlag != null" >
+        del_flag = #{delFlag},
+      </if>
+    </set>
+    where post_id = #{postId}
+  </update>
+  <select id="selectByPostId" resultMap="BaseResultMap">
+    SELECT
+    <include refid="Base_Column_List"/>
+    FROM statistic
+    WHERE
+    del_flag = 0
+    AND
+    post_id = #{postId}
+  </select>
+</mapper>

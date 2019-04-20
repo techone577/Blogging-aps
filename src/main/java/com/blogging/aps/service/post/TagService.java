@@ -1,4 +1,4 @@
-package com.blogging.aps.service;
+package com.blogging.aps.service.post;
 
 
 import com.blogging.aps.model.dto.TagAmountDTO;

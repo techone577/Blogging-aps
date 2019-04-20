@@ -7,9 +7,11 @@ import com.blogging.aps.model.eureka.RegistryInfo;
 import com.blogging.aps.model.eureka.ServiceConfig;
 import com.blogging.aps.service.netty.FactoryListHolder;
 import com.blogging.aps.support.annotation.ServiceInfo;
+import com.blogging.aps.support.utils.AopTargetUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.aop.support.AopUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
@@ -82,7 +84,10 @@ public class ApplicationContextCache implements ApplicationContextAware {
         Map<String, Object> restMap = ct.getBeansWithAnnotation(RestController.class);
         Collection<Object> c = restMap.values();
         for (Object ob : c) {
-            getServiceInfoAnnotation(ob.getClass(), list);
+            /**
+             * 避免object为aop生成的动态代理对象获取不到methods
+             */
+            getServiceInfoAnnotation(AopUtils.getTargetClass(ob), list);
         }
     }
 
