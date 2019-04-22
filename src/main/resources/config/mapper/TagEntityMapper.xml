@@ -89,4 +89,23 @@
     WHERE
     del_flag = 0
   </select>
+
+  <update id="updateByIdSelective" parameterType="com.blogging.aps.model.entity.post.TagEntity" >
+    update tag
+    <set >
+      <if test="tagName != null" >
+        tag_name = #{tagName},
+      </if>
+      <if test="delFlag != null" >
+        del_flag = #{delFlag},
+      </if>
+      <if test="addTime != null" >
+        add_time = #{addTime},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime},
+      </if>
+    </set>
+    where id = #{id}
+  </update>
 </mapper>

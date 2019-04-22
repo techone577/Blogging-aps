@@ -159,4 +159,40 @@ public class BackManagementController {
         LOG.info("（BM）恢复文章出参:{}", JsonUtil.toString(resp));
         return resp;
     }
+
+    /**
+     * 编辑tag名称
+     */
+    @RequestMapping(value = "/editTag", method = RequestMethod.POST)
+    @ServiceInfo(name = "Blogging.APS.BMController.editTag", description = "编辑标签名称")
+    public Response editTag(@Json BMTagEditReqDTO reqDTO) {
+        LOG.info("（BM）修改标签名称入参:{}", JsonUtil.toString(reqDTO));
+        Response resp = bmBusiness.editTagName(reqDTO);
+        LOG.info("（BM）修改标签名称出参:{}", JsonUtil.toString(resp));
+        return resp;
+    }
+
+    /**
+     * 文章添加tag
+     */
+    @RequestMapping(value = "/addTag", method = RequestMethod.POST)
+    @ServiceInfo(name = "Blogging.APS.BMController.addTag", description = "添加新标签")
+    public Response addTag(@Json BMTagModifyReqDTO reqDTO) {
+        LOG.info("（BM）添加标签入参:{}", JsonUtil.toString(reqDTO));
+        Response resp = bmBusiness.addTag(reqDTO);
+        LOG.info("（BM）添加标签出参:{}", JsonUtil.toString(resp));
+        return resp;
+    }
+
+    /**
+     * 文章添加tag
+     */
+    @RequestMapping(value = "/delTagForPost", method = RequestMethod.POST)
+    @ServiceInfo(name = "Blogging.APS.BMController.delTagForPost", description = "删除文章标签")
+    public Response delTagForPost(@Json BMTagModifyReqDTO reqDTO) {
+        LOG.info("（BM）删除文章标签入参:{}", JsonUtil.toString(reqDTO));
+        Response resp = bmBusiness.delTagForPost(reqDTO);
+        LOG.info("（BM）删除文章标签出参:{}", JsonUtil.toString(resp));
+        return resp;
+    }
 }

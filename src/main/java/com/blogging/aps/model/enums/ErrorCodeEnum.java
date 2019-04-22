@@ -25,7 +25,11 @@ public enum ErrorCodeEnum {
     /**
      * BM error
      */
-    POST_STATE_ERROR(30000, "状态异常");
+    POST_STATE_ERROR(30000, "文章状态异常"),
+    TAG_NAME_ALREADY_EXIST_ERROR(30001, "标签名称已存在"),
+    TAG_ALREADY_EXIST_ERROR(30002, "标签已存在"),
+    TAG_NOT_EXIST_ERROR(30003, "标签不存在");
+
 
     private int code;
 

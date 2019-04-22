@@ -15,4 +15,6 @@ public interface TagEntityMapper {
     List<TagEntity> selectTagByIdList(@Param("idList") List<Integer> idList);
 
     List<TagEntity> selectTagList();
+
+    void updateByIdSelective(TagEntity tagEntity);
 }

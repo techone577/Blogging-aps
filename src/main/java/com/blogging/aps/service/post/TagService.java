@@ -74,4 +74,12 @@ public class TagService {
     public void updateTagRelation(TagRelationEntity tagRelationEntity){
         tagRelationEntityMapper.updateByPostIdSelective(tagRelationEntity);
     }
+
+    public void updateTag(TagEntity tagEntity){
+        tagEntityMapper.updateByIdSelective(tagEntity);
+    }
+
+    public void delTagForPost(String postId,Integer tagId){
+        tagRelationEntityMapper.delByPostIdAndTagId(postId,tagId);
+    }
 }

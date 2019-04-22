@@ -58,9 +58,10 @@ public class UnifiedExceptionResolver extends SimpleMappingExceptionResolver {
             responseVo.setErrorCode(500);
         }
         String result = JsonUtil.toString(responseVo);
+        LOG.info("response:{}", result);
         if(name.contains("api"))
             result = Base64.getEncoder().encodeToString(result.getBytes(StandardCharsets.UTF_8));
-        LOG.info("response:{}", result);
+        LOG.info("response with base64:{}", result);
         write(response, result);
         return new ModelAndView();
     }

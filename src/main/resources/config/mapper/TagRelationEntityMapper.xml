@@ -147,4 +147,13 @@
     </set>
     where post_id = #{postId}
   </update>
+
+  <delete id="delByPostIdAndTagId">
+    DELETE FROM tag_relation
+    WHERE del_flag = 0
+    AND
+    post_id =#{postId}
+    AND
+    tag_id = #{tagId}
+  </delete>
 </mapper>

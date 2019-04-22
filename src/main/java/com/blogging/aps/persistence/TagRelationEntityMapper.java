@@ -26,4 +26,6 @@ public interface TagRelationEntityMapper {
     List<TagAmountDTO> selectAllTagAmount();
 
     void updateByPostIdSelective(TagRelationEntity tagRelationEntity);
+
+    void delByPostIdAndTagId(@Param("postId") String postId, @Param("tagId") Integer tagId);
 }

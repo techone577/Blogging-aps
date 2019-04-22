@@ -254,6 +254,11 @@ public class BMBusiness {
         return ResponseBuilder.build(true, "移动成功");
     }
 
+    /**
+     * 文章恢复
+     * @param reqDTO
+     * @return
+     */
     public Response recoverPost(BMPostModifyReqDTO reqDTO) {
         if (null == reqDTO || StringUtils.isBlank(reqDTO.getPostId()))
             return ResponseBuilder.build(false, "请求PostId为空");
@@ -275,9 +280,14 @@ public class BMBusiness {
         return ResponseBuilder.build(true, "恢复成功");
     }
 
-    //删除or重建tag-post关系
-    private void modifyTagRelation(String postId,Integer delFlag){
-        TagRelationEntity tagRelationEntity = new TagRelationEntity(){
+    /**
+     * 删除or重建tag-post关系
+     *
+     * @param postId
+     * @param delFlag
+     */
+    private void modifyTagRelation(String postId, Integer delFlag) {
+        TagRelationEntity tagRelationEntity = new TagRelationEntity() {
             {
                 setPostId(postId);
                 setDelFlag(delFlag);
@@ -285,5 +295,105 @@ public class BMBusiness {
             }
         };
         tagService.updateTagRelation(tagRelationEntity);
+    }
+
+    /**
+     * 编辑tag名称
+     *
+     * @param reqDTO
+     * @return
+     */
+    public Response editTagName(BMTagEditReqDTO reqDTO) {
+        if (null == reqDTO.getId() || StringUtils.isBlank(reqDTO.getTagName()))
+            throw new UnifiedException(ErrorCodeEnum.PARAM_ILLEGAL_ERROR);
+        List<TagEntity> entities = tagService.queryTagByName(reqDTO.getTagName());
+        if (null != entities && entities.size() > 0)
+            throw new UnifiedException(ErrorCodeEnum.TAG_NAME_ALREADY_EXIST_ERROR);
+        TagEntity tagEntity = new TagEntity() {
+            {
+                setId(reqDTO.getId());
+                setTagName(reqDTO.getTagName());
+            }
+        };
+        tagService.updateTag(tagEntity);
+        return ResponseBuilder.build(true, "修改成功");
+    }
+
+    /**
+     * 添加tag
+     *
+     * @param reqDTO
+     * @return
+     */
+    public Response addTag(BMTagModifyReqDTO reqDTO) {
+        if (StringUtils.isBlank(reqDTO.getPostId()) || StringUtils.isBlank(reqDTO.getTagName()))
+            throw new UnifiedException(ErrorCodeEnum.PARAM_ILLEGAL_ERROR);
+        List<String> tags = postBusiness.getPostTags(reqDTO.getPostId());
+        Optional optional = tags.stream().filter(i -> i.equals(reqDTO.getTagName())).findAny();
+        if (optional.isPresent())
+            throw new UnifiedException(ErrorCodeEnum.TAG_ALREADY_EXIST_ERROR);
+        List<TagEntity> entities = tagService.queryTagByName(reqDTO.getTagName());
+        if (null == entities || entities.size() == 0)
+            createNewTagForPost(reqDTO.getTagName(), reqDTO.getPostId());
+        else
+            addTagFroPost(reqDTO.getTagName(), reqDTO.getPostId());
+        return ResponseBuilder.build(true, "添加成功");
+    }
+
+    public Response delTagForPost(BMTagModifyReqDTO reqDTO){
+        if (StringUtils.isBlank(reqDTO.getPostId()) || StringUtils.isBlank(reqDTO.getTagName()))
+            throw new UnifiedException(ErrorCodeEnum.PARAM_ILLEGAL_ERROR);
+        List<TagEntity> entities = tagService.queryTagByName(reqDTO.getTagName());
+        if(null == entities || entities.size() == 0)
+            throw new UnifiedException(ErrorCodeEnum.TAG_ALREADY_EXIST_ERROR);
+        Integer tagId = entities.get(0).getId();
+        tagService.delTagForPost(reqDTO.getPostId(),tagId);
+        return ResponseBuilder.build(true,"删除成功");
+    }
+
+    /**
+     * tag不存在的情况下添加
+     *
+     * @param name
+     * @param postId
+     */
+    private void createNewTagForPost(String name, String postId) {
+        TagEntity tagEntity = new TagEntity() {
+            {
+                setTagName(name);
+                setDelFlag(0);
+                setAddTime(new Date());
+            }
+        };
+        tagService.insertTag(tagEntity);
+        Integer tagId = tagEntity.getId();
+        TagRelationEntity relationEntity = new TagRelationEntity() {
+            {
+                setTagId(tagId);
+                setPostId(postId);
+                setAddTime(new Date());
+                setDelFlag(0);
+            }
+        };
+        tagService.insertTagRelation(relationEntity);
+    }
+
+    /**
+     * tag存在的情况下
+     *
+     * @param name
+     * @param postId
+     */
+    private void addTagFroPost(String name, String postId) {
+        List<TagEntity> entities = tagService.queryTagByName(name);
+        TagRelationEntity relationEntity = new TagRelationEntity() {
+            {
+                setTagId(entities.get(0).getId());
+                setPostId(postId);
+                setAddTime(new Date());
+                setDelFlag(0);
+            }
+        };
+        tagService.insertTagRelation(relationEntity);
     }
 }
