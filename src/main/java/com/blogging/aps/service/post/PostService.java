@@ -48,8 +48,8 @@ public class PostService {
         return postInfoEntityMapper.selectLatestFivePosts();
     }
 
-    public PostInfoEntity queryPostByPostId(String postId) {
-        return postInfoEntityMapper.selectPostByPostId(postId);
+    public PostInfoEntity queryPostByPostId(String postId, Integer releaseFlag) {
+        return postInfoEntityMapper.selectPostByPostId(postId, releaseFlag);
     }
 
     public PostInfoEntity queryPostByPostIdWithoutDel(String postId) {

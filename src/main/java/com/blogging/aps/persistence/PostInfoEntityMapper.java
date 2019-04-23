@@ -13,7 +13,7 @@ public interface PostInfoEntityMapper {
 
     List<PostInfoEntity> selectLatestFivePosts();
 
-    PostInfoEntity selectPostByPostId(@Param("postId") String postId);
+    PostInfoEntity selectPostByPostId(@Param("postId") String postId,@Param("releaseFlag") Integer releaseFlag);
 
     PostInfoEntity selectPostByPostIdWithoutDel(@Param("postId") String postId);
 

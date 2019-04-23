@@ -28,7 +28,9 @@ public enum ErrorCodeEnum {
     POST_STATE_ERROR(30000, "文章状态异常"),
     TAG_NAME_ALREADY_EXIST_ERROR(30001, "标签名称已存在"),
     TAG_ALREADY_EXIST_ERROR(30002, "标签已存在"),
-    TAG_NOT_EXIST_ERROR(30003, "标签不存在");
+    TAG_NOT_EXIST_ERROR(30003, "标签不存在"),
+    TITLE_EMPTY_ERROR(30004, "文章标题为空"),
+    POST_NOT_EXIST_ERROR(30005, "文章不存在");
 
 
     private int code;

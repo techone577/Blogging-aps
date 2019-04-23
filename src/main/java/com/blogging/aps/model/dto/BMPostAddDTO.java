@@ -1,8 +1,8 @@
-package com.blogging.aps.model.entity.post;
+package com.blogging.aps.model.dto;
 
 import java.util.List;
 
-public class PostAddReqEntity {
+public class BMPostAddDTO {
 
     private String memberId;
 
@@ -15,6 +15,8 @@ public class PostAddReqEntity {
     private List<String> tags;
 
     private String content;
+
+    private Integer releaseFlag;
 
     public String getMemberId() {
         return memberId;
@@ -62,5 +64,13 @@ public class PostAddReqEntity {
 
     public void setContent(String content) {
         this.content = content;
+    }
+
+    public Integer getReleaseFlag() {
+        return releaseFlag;
+    }
+
+    public void setReleaseFlag(Integer releaseFlag) {
+        this.releaseFlag = releaseFlag;
     }
 }

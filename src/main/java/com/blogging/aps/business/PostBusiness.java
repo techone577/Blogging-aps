@@ -3,13 +3,12 @@ package com.blogging.aps.business;
 import com.blogging.aps.model.dto.*;
 import com.blogging.aps.model.entity.Response;
 import com.blogging.aps.model.entity.post.*;
+import com.blogging.aps.model.enums.ErrorCodeEnum;
 import com.blogging.aps.service.post.StatisticService;
 import com.blogging.aps.service.post.TagService;
 import com.blogging.aps.service.post.PostService;
-import com.blogging.aps.support.utils.DateUtils;
-import com.blogging.aps.support.utils.IdGenerator;
-import com.blogging.aps.support.utils.MarkDownUtils;
-import com.blogging.aps.support.utils.ResponseBuilder;
+import com.blogging.aps.support.exception.UnifiedException;
+import com.blogging.aps.support.utils.*;
 import com.github.pagehelper.PageInfo;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -49,11 +48,11 @@ public class PostBusiness {
      * @param entity
      * @return
      */
-    public Response addPost(PostAddReqEntity entity) {
+    public Response addPost(BMPostAddDTO entity) {
         PostInfoEntity postInfoEntity = new PostInfoEntity();
         PassageEntity passageEntity = new PassageEntity();
         if (StringUtils.isBlank(entity.getTitle()))
-            return ResponseBuilder.build(false, "文章标题为空");
+            throw new UnifiedException(ErrorCodeEnum.TITLE_EMPTY_ERROR);
         buildArticle(postInfoEntity, passageEntity, entity);
         //插入文章
         postService.insertPassgae(passageEntity);
@@ -106,9 +105,9 @@ public class PostBusiness {
      * @return
      */
     public Response queryBlog(PostQueryReqDTO reqDTO){
-        PostInfoEntity postInfoEntity = postService.queryPostByPostId(reqDTO.getPostId());
+        PostInfoEntity postInfoEntity = postService.queryPostByPostId(reqDTO.getPostId(),1);
         if (null == postInfoEntity)
-            return ResponseBuilder.build(true, "文章为空");
+            throw new UnifiedException(ErrorCodeEnum.POST_NOT_EXIST_ERROR);
         PassageEntity passageEntity = postService.queryPassageByPassageId(postInfoEntity.getPassageId());
         String htmlContent = MarkDownUtils.markDownToHtml(passageEntity.getContent());
 
@@ -227,7 +226,7 @@ public class PostBusiness {
 
     //TODO tag?
 
-    private void buildArticle(PostInfoEntity postInfoEntity, PassageEntity passageEntity, PostAddReqEntity reqEntity) {
+    private void buildArticle(PostInfoEntity postInfoEntity, PassageEntity passageEntity, BMPostAddDTO reqEntity) {
         postInfoEntity.setTitle(reqEntity.getTitle());
         postInfoEntity.setCategory(reqEntity.getCategory());
         postInfoEntity.setPostId(IdGenerator.generatePostId());
@@ -238,6 +237,7 @@ public class PostBusiness {
         passageEntity.setPassageId(IdGenerator.generatePassageId());
         passageEntity.setDelFlag(0);
         passageEntity.setContent(reqEntity.getContent());
+        postInfoEntity.setReleaseFlag(reqEntity.getReleaseFlag());
 
         Date now = new Date();
         postInfoEntity.setAddTime(now);
@@ -331,6 +331,10 @@ public class PostBusiness {
                     setUpdateTime(DateUtils.formatDateTime(postInfoEntity.getUpdateTime()));
                 }
             };
+            PassageEntity passageEntity = postService.queryPassageByPassageId(postInfoEntity.getPassageId());
+            if (null != passageEntity) {
+                respDTO.setFirstImgUrl(RegexUtil.matchFirstImgUrlInMD(passageEntity.getContent()));
+            }
             StatisticInfo statisticInfo = getStatisticInfo(postInfoEntity.getPostId());
             respDTO.setStatisticInfo(statisticInfo);
             respDTOS.add(respDTO);
@@ -367,7 +371,7 @@ public class PostBusiness {
 
     public Response queryMDPost(PostQueryReqDTO reqDTO) {
         String postId = reqDTO.getPostId();
-        PostInfoEntity postInfoEntity = postService.queryPostByPostId(postId);
+        PostInfoEntity postInfoEntity = postService.queryPostByPostId(postId,null);
         if (null == postInfoEntity)
             return ResponseBuilder.build(true,"文章为空");
 

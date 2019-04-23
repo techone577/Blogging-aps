@@ -123,9 +123,9 @@ public class BMBusiness {
      */
     public Response queryBlog(PostQueryReqDTO reqDTO){
         String postId = reqDTO.getPostId();
-        PostInfoEntity postInfoEntity = postService.queryPostByPostId(postId);
+        PostInfoEntity postInfoEntity = postService.queryPostByPostId(postId,null);
         if (null == postInfoEntity)
-            return ResponseBuilder.build(true,null);
+            throw new UnifiedException(ErrorCodeEnum.POST_NOT_EXIST_ERROR);
 
         PassageEntity passageEntity = postService.queryPassageByPassageId(postInfoEntity.getPassageId());
         List<String> tags = postBusiness.getPostTags(postId);
@@ -193,7 +193,7 @@ public class BMBusiness {
     public Response releasePost(BMPostModifyReqDTO reqDTO) {
         if (null == reqDTO || StringUtils.isBlank(reqDTO.getPostId()))
             return ResponseBuilder.build(false, "请求PostId为空");
-        PostInfoEntity postInfoEntity = postService.queryPostByPostId(reqDTO.getPostId());
+        PostInfoEntity postInfoEntity = postService.queryPostByPostId(reqDTO.getPostId(),null);
         if (null == postInfoEntity)
             return ResponseBuilder.build(false, "文章不存在");
         if (1 == postInfoEntity.getReleaseFlag() || 1 == postInfoEntity.getDelFlag())
@@ -215,7 +215,7 @@ public class BMBusiness {
     public Response offlinePost(BMPostModifyReqDTO reqDTO) {
         if (null == reqDTO || StringUtils.isBlank(reqDTO.getPostId()))
             return ResponseBuilder.build(false, "请求PostId为空");
-        PostInfoEntity postInfoEntity = postService.queryPostByPostId(reqDTO.getPostId());
+        PostInfoEntity postInfoEntity = postService.queryPostByPostId(reqDTO.getPostId(),null);
         if (null == postInfoEntity)
             return ResponseBuilder.build(false, "文章不存在");
         if (0 == postInfoEntity.getReleaseFlag() || 1 == postInfoEntity.getDelFlag())
@@ -395,5 +395,12 @@ public class BMBusiness {
             }
         };
         tagService.insertTagRelation(relationEntity);
+    }
+
+
+    public Response postUpdate(BMPostUpdateDTO updateDTO){
+
+        //TODO fuck chanpin
+        return null;
     }
 }

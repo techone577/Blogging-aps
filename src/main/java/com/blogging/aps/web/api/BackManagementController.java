@@ -5,6 +5,7 @@ import com.blogging.aps.business.PostBusiness;
 import com.blogging.aps.business.manage.AbstractPostListQueryBusiness;
 import com.blogging.aps.model.dto.*;
 import com.blogging.aps.model.entity.Response;
+import com.blogging.aps.model.dto.BMPostAddDTO;
 import com.blogging.aps.support.annotation.Json;
 import com.blogging.aps.support.annotation.ServiceInfo;
 import com.blogging.aps.support.strategy.FactoryList;
@@ -194,5 +195,29 @@ public class BackManagementController {
         Response resp = bmBusiness.delTagForPost(reqDTO);
         LOG.info("（BM）删除文章标签出参:{}", JsonUtil.toString(resp));
         return resp;
+    }
+
+    /**
+     * 文章新增
+     */
+    @RequestMapping(value = "/postAdd", method = RequestMethod.POST)
+    @ServiceInfo(name = "Blogging.APS.BMController.postAdd", description = "文章新增")
+    public Response postAdd (@Json BMPostAddDTO entity) {
+        LOG.info("新增文章入参：{}",JsonUtil.toString(entity));
+        Response response = postBusiness.addPost(entity);
+        LOG.info("新增文章出参：{}", JsonUtil.toString(response));
+        return response;
+    }
+
+    /**
+     * 文章更新
+     */
+    @RequestMapping(value = "/postAdd", method = RequestMethod.POST)
+    @ServiceInfo(name = "Blogging.APS.BMController.postAdd", description = "文章新增")
+    public Response postUpdate (@Json BMPostUpdateDTO updateDTO) {
+        LOG.info("更新文章入参：{}",JsonUtil.toString(updateDTO));
+        Response response = bmBusiness.postUpdate(updateDTO);
+        LOG.info("更新文章出参：{}", JsonUtil.toString(response));
+        return response;
     }
 }

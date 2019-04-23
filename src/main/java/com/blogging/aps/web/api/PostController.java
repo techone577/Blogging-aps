@@ -7,7 +7,6 @@ import com.blogging.aps.model.dto.PostCatchReqDTO;
 import com.blogging.aps.model.dto.PostPagingQueryDTO;
 import com.blogging.aps.model.dto.PostQueryReqDTO;
 import com.blogging.aps.model.entity.Response;
-import com.blogging.aps.model.entity.post.PostAddReqEntity;
 import com.blogging.aps.support.annotation.Json;
 import com.blogging.aps.support.annotation.PostStatistic;
 import com.blogging.aps.support.annotation.ServiceInfo;
@@ -85,18 +84,6 @@ public class PostController {
         Response resp = postBusiness.queryMDPost(mdQueryReqDTO);
         LOG.info("文章md查询出参:{}", JsonUtil.toString(resp));
         return resp;
-    }
-
-    /**
-     * 文章新增
-     */
-    @RequestMapping(value = "/postAdd", method = RequestMethod.POST)
-    @ServiceInfo(name = "Blogging.APS.PostController.postAdd", description = "文章新增")
-    public Response postAdd (@Json PostAddReqEntity entity) {
-        LOG.info("新增文章入参：{}",JsonUtil.toString(entity));
-        Response response = postBusiness.addPost(entity);
-        LOG.info("新增文章出参：{}", JsonUtil.toString(response));
-        return response;
     }
 
     /**

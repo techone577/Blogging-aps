@@ -20,6 +20,8 @@ public class HomePagePostListDTO {
 
     private StatisticInfo statisticInfo;
 
+    private String firstImgUrl;
+
     public String getPostId() {
         return postId;
     }
@@ -82,5 +84,13 @@ public class HomePagePostListDTO {
 
     public void setStatisticInfo(StatisticInfo statisticInfo) {
         this.statisticInfo = statisticInfo;
+    }
+
+    public String getFirstImgUrl() {
+        return firstImgUrl;
+    }
+
+    public void setFirstImgUrl(String firstImgUrl) {
+        this.firstImgUrl = firstImgUrl;
     }
 }

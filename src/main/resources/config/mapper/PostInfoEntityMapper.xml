@@ -113,7 +113,7 @@
     limit 5
   </select>
 
-  <select id="selectPostByPostId" resultMap="BaseResultMap" parameterType="java.lang.String">
+  <select id="selectPostByPostId" resultMap="BaseResultMap">
     SELECT
     <include refid="Base_Column_List"/>
     FROM post_info
@@ -121,6 +121,10 @@
     del_flag = 0
     AND
     post_id = #{postId}
+    <if test="releaseFlag != null">
+      AND
+      release_flag = #{releaseFlag}
+    </if>
   </select>
 
   <select id="selectPostByPostIdWithoutDel" resultMap="BaseResultMap" parameterType="java.lang.String">
