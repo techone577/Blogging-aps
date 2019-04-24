@@ -13,7 +13,7 @@ public interface PostInfoEntityMapper {
 
     List<PostInfoEntity> selectLatestFivePosts();
 
-    PostInfoEntity selectPostByPostId(@Param("postId") String postId,@Param("releaseFlag") Integer releaseFlag);
+    PostInfoEntity selectPostByPostId(@Param("postId") String postId, @Param("releaseFlag") Integer releaseFlag);
 
     PostInfoEntity selectPostByPostIdWithoutDel(@Param("postId") String postId);
 
@@ -32,4 +32,6 @@ public interface PostInfoEntityMapper {
     List<PostInfoEntity> selectRubbish(@Param("delFlag") Integer delFlag);
 
     void updateByPrimaryKeySelective(PostInfoEntity postInfoEntity);
+
+    void deletePostByPostId(@Param("postId") String postId);
 }

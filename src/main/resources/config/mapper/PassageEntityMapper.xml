@@ -74,4 +74,28 @@
     AND
     passage_id = #{passageId}
   </select>
+  <update id="updatePassageByPassageId" parameterType="com.blogging.aps.model.entity.post.PassageEntity" >
+    update passage
+    <set >
+      <if test="content != null" >
+        content = #{content},
+      </if>
+      <if test="addTime != null" >
+        add_time = #{addTime},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime},
+      </if>
+      <if test="delFlag != null" >
+        del_flag = #{delFlag},
+      </if>
+    </set>
+    where passage_id = #{passageId}
+  </update>
+  <delete id="deletePassageByPassageId">
+    DELETE FROM passage
+    WHERE del_flag = 0
+    AND
+    passage_id =#{passageId}
+  </delete>
 </mapper>

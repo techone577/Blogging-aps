@@ -37,11 +37,10 @@ public class BackManagementController {
     private FactoryList<AbstractPostListQueryBusiness, String> postListQueryBusiness;
 
     /**
-     *
-     *通过查询参数查询tag
+     * 通过查询参数查询tag
      */
     @RequestMapping(value = "/queryTags", method = RequestMethod.POST)
-    @ServiceInfo(name = "Blogging.APS.BMController.queryTags",description = "查询tag")
+    @ServiceInfo(name = "Blogging.APS.BMController.queryTags", description = "查询tag")
     public Response queryTagByParam(@Json TagQueryDTO dto) {
         LOG.info("(BM)tag查询入参:{}", JsonUtil.toString(dto));
         Response resp = bmBusiness.queryTagByParam(dto);
@@ -53,7 +52,7 @@ public class BackManagementController {
      * 查询tagList 下拉框使用
      */
     @RequestMapping(value = "/queryTagList", method = RequestMethod.POST)
-    @ServiceInfo(name = "Blogging.APS.BMController.queryTagList",description = "查询tag下拉框")
+    @ServiceInfo(name = "Blogging.APS.BMController.queryTagList", description = "查询tag下拉框")
     public Response queryTagList() {
         LOG.info("(BM)tagList查询入参:{}", JsonUtil.toString(null));
         Response resp = bmBusiness.queryTagList();
@@ -63,39 +62,35 @@ public class BackManagementController {
 
     /**
      * 查询文章列表
-     *
      */
     @RequestMapping(value = "/queryPosts", method = RequestMethod.POST)
     @ServiceInfo(name = "Blogging.APS.BMController.queryPosts", description = "文章列表查询")
-    public Response queryPosts (@Json BMPostListQueryDTO queryDTO) {
-        LOG.info("（BM）文章列表分页查询入参:{}",JsonUtil.toString(queryDTO));
+    public Response queryPosts(@Json BMPostListQueryDTO queryDTO) {
+        LOG.info("（BM）文章列表分页查询入参:{}", JsonUtil.toString(queryDTO));
         Response resp = bmBusiness.queryPostList(queryDTO);
         LOG.info("（BM）文章列表分页查询出参:{}", JsonUtil.toString(resp));
         return resp;
     }
 
     /**
-     *
      * 查询草稿箱
-     *
      */
     @RequestMapping(value = "/queryDrafts", method = RequestMethod.POST)
     @ServiceInfo(name = "Blogging.APS.BMController.queryDrafts", description = "草稿列表查询")
-    public Response queryDrafts (@Json BMDraftsQueryDTO queryDTO) {
-        LOG.info("（BM）草稿列表分页查询入参:{}",JsonUtil.toString(queryDTO));
+    public Response queryDrafts(@Json BMDraftsQueryDTO queryDTO) {
+        LOG.info("（BM）草稿列表分页查询入参:{}", JsonUtil.toString(queryDTO));
         Response resp = bmBusiness.queryDrafts(queryDTO);
         LOG.info("（BM）草稿列表分页查询出参:{}", JsonUtil.toString(resp));
         return resp;
     }
 
     /**
-     *
      * 查询回收站
      */
     @RequestMapping(value = "/queryRubbishes", method = RequestMethod.POST)
     @ServiceInfo(name = "Blogging.APS.BMController.queryRubbishes", description = "回收站文章列表查询")
-    public Response queryRubbishes (@Json BMRubbishQueryDTO reqDTO) {
-        LOG.info("（BM）回收站列表分页查询入参:{}",JsonUtil.toString(reqDTO));
+    public Response queryRubbishes(@Json BMRubbishQueryDTO reqDTO) {
+        LOG.info("（BM）回收站列表分页查询入参:{}", JsonUtil.toString(reqDTO));
         Response resp = bmBusiness.queryRubbish(reqDTO);
         LOG.info("（BM）回收站列表分页查询出参:{}", JsonUtil.toString(resp));
         return resp;
@@ -202,8 +197,8 @@ public class BackManagementController {
      */
     @RequestMapping(value = "/postAdd", method = RequestMethod.POST)
     @ServiceInfo(name = "Blogging.APS.BMController.postAdd", description = "文章新增")
-    public Response postAdd (@Json BMPostAddDTO entity) {
-        LOG.info("新增文章入参：{}",JsonUtil.toString(entity));
+    public Response postAdd(@Json BMPostAddDTO entity) {
+        LOG.info("新增文章入参：{}", JsonUtil.toString(entity));
         Response response = postBusiness.addPost(entity);
         LOG.info("新增文章出参：{}", JsonUtil.toString(response));
         return response;
@@ -212,12 +207,24 @@ public class BackManagementController {
     /**
      * 文章更新
      */
-    @RequestMapping(value = "/postAdd", method = RequestMethod.POST)
-    @ServiceInfo(name = "Blogging.APS.BMController.postAdd", description = "文章新增")
-    public Response postUpdate (@Json BMPostUpdateDTO updateDTO) {
-        LOG.info("更新文章入参：{}",JsonUtil.toString(updateDTO));
+    @RequestMapping(value = "/postUpdate", method = RequestMethod.POST)
+    @ServiceInfo(name = "Blogging.APS.BMController.postUpdate", description = "文章更新")
+    public Response postUpdate(@Json BMPostUpdateDTO updateDTO) {
+        LOG.info("更新文章入参：{}", JsonUtil.toString(updateDTO));
         Response response = bmBusiness.postUpdate(updateDTO);
         LOG.info("更新文章出参：{}", JsonUtil.toString(response));
+        return response;
+    }
+
+    /**
+     * 文章删除
+     */
+    @RequestMapping(value = "/postDelete", method = RequestMethod.POST)
+    @ServiceInfo(name = "Blogging.APS.BMController.postDelete", description = "文章删除")
+    public Response postDelete(@Json BMPostModifyReqDTO reqDTO) {
+        LOG.info("删除文章入参：{}", JsonUtil.toString(reqDTO));
+        Response response = bmBusiness.postDelete(reqDTO);
+        LOG.info("删除文章出参：{}", JsonUtil.toString(response));
         return response;
     }
 }

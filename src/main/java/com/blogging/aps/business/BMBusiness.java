@@ -332,23 +332,24 @@ public class BMBusiness {
         Optional optional = tags.stream().filter(i -> i.equals(reqDTO.getTagName())).findAny();
         if (optional.isPresent())
             throw new UnifiedException(ErrorCodeEnum.TAG_ALREADY_EXIST_ERROR);
-        List<TagEntity> entities = tagService.queryTagByName(reqDTO.getTagName());
-        if (null == entities || entities.size() == 0)
-            createNewTagForPost(reqDTO.getTagName(), reqDTO.getPostId());
-        else
-            addTagFroPost(reqDTO.getTagName(), reqDTO.getPostId());
+        addTag(reqDTO.getTagName(), reqDTO.getPostId());
         return ResponseBuilder.build(true, "添加成功");
     }
 
-    public Response delTagForPost(BMTagModifyReqDTO reqDTO){
+    public Response delTagForPost(BMTagModifyReqDTO reqDTO) {
         if (StringUtils.isBlank(reqDTO.getPostId()) || StringUtils.isBlank(reqDTO.getTagName()))
             throw new UnifiedException(ErrorCodeEnum.PARAM_ILLEGAL_ERROR);
-        List<TagEntity> entities = tagService.queryTagByName(reqDTO.getTagName());
-        if(null == entities || entities.size() == 0)
-            throw new UnifiedException(ErrorCodeEnum.TAG_ALREADY_EXIST_ERROR);
-        Integer tagId = entities.get(0).getId();
-        tagService.delTagForPost(reqDTO.getPostId(),tagId);
-        return ResponseBuilder.build(true,"删除成功");
+        deleteTagRelation(reqDTO.getPostId(), reqDTO.getTagName());
+        return ResponseBuilder.build(true, "删除成功");
+    }
+
+
+    private void addTag(String tagName, String postId) {
+        List<TagEntity> entities = tagService.queryTagByName(tagName);
+        if (null == entities || entities.size() == 0)
+            createNewTagForPost(tagName, postId);
+        else
+            addTagFroPost(tagName, postId);
     }
 
     /**
@@ -398,9 +399,105 @@ public class BMBusiness {
     }
 
 
-    public Response postUpdate(BMPostUpdateDTO updateDTO){
+    /**
+     * 文章更新
+     *
+     * @param updateDTO
+     * @return
+     */
+    public Response postUpdate(BMPostUpdateDTO updateDTO) {
+        String postId = updateDTO.getPostId();
+        if (StringUtils.isBlank(postId))
+            throw new UnifiedException(ErrorCodeEnum.INTERFACE_ERROR, "postId为空");
+        PostInfoEntity postInfoEntity = postService.queryPostByPostId(postId, null);
+        if (null == postInfoEntity)
+            throw new UnifiedException(ErrorCodeEnum.POST_NOT_EXIST_ERROR);
+        //更新post
+        BMPostAddDTO addDTO = updateDTO.getAddDTO();
+        postInfoEntity.setReleaseFlag(addDTO.getReleaseFlag());
+        postInfoEntity.setSummary(addDTO.getSummary());
+        postInfoEntity.setTitle(addDTO.getTitle());
+        postInfoEntity.setMemberId(addDTO.getMemberId());
+        postService.updatePostByPostId(postInfoEntity);
 
-        //TODO fuck chanpin
-        return null;
+        //更新passage
+        String passageId = postInfoEntity.getPassageId();
+        PassageEntity passageEntity = postService.queryPassageByPassageId(passageId);
+        if (null == passageEntity) {
+            passageEntity = new PassageEntity() {
+                {
+                    setAddTime(new Date());
+                    setContent(addDTO.getContent());
+                    setDelFlag(0);
+                    setPassageId(passageId);
+                    setUpdateTime(new Date());
+                }
+            };
+            postService.insertPassgae(passageEntity);
+        }
+        passageEntity.setPassageId(passageId);
+        passageEntity.setContent(addDTO.getContent());
+        postService.updatePassageByPassageId(passageEntity);
+        //更新tag
+        //删除
+        List<String> orgTags = postBusiness.getPostTags(postId);
+        if(null != orgTags) {
+            orgTags.stream().forEach(i -> {
+                deleteTagRelation(postId, i);
+            });
+        }
+        //添加
+        List<String> tags = addDTO.getTags();
+        if(null != tags) {
+            tags.stream().forEach(i -> {
+                addTag(i, postId);
+            });
+        }
+        return ResponseBuilder.build(true, "更新成功");
+    }
+
+    /**
+     * 文章删除
+     *
+     */
+    public Response postDelete(BMPostModifyReqDTO reqDTO) {
+        if (null == reqDTO || StringUtils.isBlank(reqDTO.getPostId()))
+            throw new UnifiedException(ErrorCodeEnum.PARAM_ILLEGAL_ERROR, "postId为空");
+        PostInfoEntity postInfoEntity = postService.queryPostByPostIdWithoutDel(reqDTO.getPostId());
+        if (null == postInfoEntity)
+            throw new UnifiedException(ErrorCodeEnum.POST_NOT_EXIST_ERROR);
+        //删除passage
+        String passageId = postInfoEntity.getPassageId();
+        PassageEntity passageEntity = postService.queryPassageByPassageId(passageId);
+        if (null != passageEntity)
+            postService.deletePassageByPassageId(passageId);
+        //删除tags
+        List<String> tags = postBusiness.getPostTagsWithoutDel(postInfoEntity.getPostId());
+        if(null != tags) {
+            tags.stream().forEach(i -> {
+                try {
+                    deleteTagRelation(postInfoEntity.getPostId(), i);
+                } catch (UnifiedException ue) {
+                }
+            });
+        }
+        //删除post
+        postService.deletePostByPostId(reqDTO.getPostId());
+        return ResponseBuilder.build(true, "删除成功");
+    }
+
+
+    /**
+     * 删除tag-post关联
+     *
+     * @param postId
+     * @param tagName
+     */
+    private void deleteTagRelation(String postId, String tagName) {
+        List<TagEntity> entities = tagService.queryTagByName(tagName);
+        if (null == entities || entities.size() == 0)
+            throw new UnifiedException(ErrorCodeEnum.TAG_ALREADY_EXIST_ERROR);
+        Integer tagId = entities.get(0).getId();
+        tagService.delTagForPost(postId, tagId);
     }
 }

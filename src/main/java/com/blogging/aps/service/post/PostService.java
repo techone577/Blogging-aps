@@ -64,45 +64,45 @@ public class PostService {
     /**
      * 查询上一篇文章
      */
-    public PostInfoEntity queryPreviousPost(Integer id,String postId){
-        return postInfoEntityMapper.selectPreviousPost(id,postId);
+    public PostInfoEntity queryPreviousPost(Integer id, String postId) {
+        return postInfoEntityMapper.selectPreviousPost(id, postId);
     }
 
     /**
      * 查询下一篇文章
      */
-    public PostInfoEntity queryNextPost(Integer id,String postId){
-        return postInfoEntityMapper.selectNextPost(id,postId);
+    public PostInfoEntity queryNextPost(Integer id, String postId) {
+        return postInfoEntityMapper.selectNextPost(id, postId);
     }
 
     /**
      * 分页查询博客列表
      */
-    public List<PostInfoEntity> queryPostListByPaging(PostPagingQueryDTO queryDTO){
-        PageHelper.startPage(queryDTO.getPageNum(),queryDTO.getPageSize());
+    public List<PostInfoEntity> queryPostListByPaging(PostPagingQueryDTO queryDTO) {
+        PageHelper.startPage(queryDTO.getPageNum(), queryDTO.getPageSize());
         return postInfoEntityMapper.selectPostListByPaging(queryDTO.getReleaseFlag(), queryDTO.getDelFlag());
     }
 
     /**
      * 根据id列表查询
      */
-    public List<PostInfoEntity> queryPostListByIdList(List<String> postIds, Integer releaseFlag){
+    public List<PostInfoEntity> queryPostListByIdList(List<String> postIds, Integer releaseFlag) {
         return postInfoEntityMapper.selectPostByIdList(postIds, releaseFlag);
     }
 
     /**
      * 统计所有已发布博客数量
      */
-    public Integer queryPostCount(Integer releaseFlag, Integer delFlag){
+    public Integer queryPostCount(Integer releaseFlag, Integer delFlag) {
         return postInfoEntityMapper.selectPostCount(releaseFlag, delFlag);
     }
 
     /**
      * 后管按条件查询文章列表
      */
-    public List<PostInfoEntity> BMQueryPostList(BMPostListQueryDTO queryDTO){
-        PageHelper.startPage(queryDTO.getPageNum(),queryDTO.getPageSize());
-        return postTagWrapperMapper.selectPostByParams(queryDTO.getTitle(),queryDTO.getTags());
+    public List<PostInfoEntity> BMQueryPostList(BMPostListQueryDTO queryDTO) {
+        PageHelper.startPage(queryDTO.getPageNum(), queryDTO.getPageSize());
+        return postTagWrapperMapper.selectPostByParams(queryDTO.getTitle(), queryDTO.getTags());
     }
 
     /**
@@ -116,8 +116,8 @@ public class PostService {
     /**
      * 查询回收站文章
      */
-    public List<PostInfoEntity> BMRubbishQuery(BMRubbishQueryDTO queryDTO){
-        PageHelper.startPage(queryDTO.getPageNum(),queryDTO.getPageSize());
+    public List<PostInfoEntity> BMRubbishQuery(BMRubbishQueryDTO queryDTO) {
+        PageHelper.startPage(queryDTO.getPageNum(), queryDTO.getPageSize());
         return postInfoEntityMapper.selectRubbish(queryDTO.getDelFlag());
 
     }
@@ -128,6 +128,28 @@ public class PostService {
     public void updatePostByPostId(PostInfoEntity entity) {
         entity.setUpdateTime(new Date());
         postInfoEntityMapper.updateByPrimaryKeySelective(entity);
+    }
+
+    /**
+     * 文章更新
+     */
+    public void updatePassageByPassageId(PassageEntity passageEntity) {
+        passageEntity.setUpdateTime(new Date());
+        passageEntityMapper.updatePassageByPassageId(passageEntity);
+    }
+
+    /**
+     * 删除passage
+     */
+    public void deletePassageByPassageId(String passageId) {
+        passageEntityMapper.deletePassageByPassageId(passageId);
+    }
+
+    /**
+     * 删除post
+     */
+    public void deletePostByPostId(String postId) {
+        postInfoEntityMapper.deletePostByPostId(postId);
     }
 
 }

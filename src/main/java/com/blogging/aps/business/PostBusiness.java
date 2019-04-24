@@ -343,11 +343,11 @@ public class PostBusiness {
     }
 
     public List<String> getPostTags(String postId) {
-
-        List<Integer> tagIdList = tagService.queryByPostId(postId)
-                .stream().map(item -> item.getTagId()).collect(Collectors.toList());
-        if (null == tagIdList || tagIdList.size() == 0)
+        List<TagRelationEntity> entities = tagService.queryByPostId(postId);
+        if (null == entities || entities.size() == 0)
             return null;
+        List<Integer> tagIdList = entities
+                .stream().map(item -> item.getTagId()).collect(Collectors.toList());
         List<String> tagList = tagService.queryByTagIdList(tagIdList)
                 .stream().map(item -> item.getTagName()).collect(Collectors.toList());
         return tagList;

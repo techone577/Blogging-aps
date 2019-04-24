@@ -24,7 +24,7 @@ public class ViewTestController {
     private ServiceClient caller;
 
     @RequestMapping(value = "/test")
-    @ServiceInfo(name = "BLOG.TestController.test", description = "测试方法注册")
+//    @ServiceInfo(name = "BLOG.TestController.test", description = "测试方法注册")
     public Response test () {
         SignInReqDTO reqDTO = new SignInReqDTO();
         reqDTO.setRootPassword("tetetete");
@@ -33,7 +33,7 @@ public class ViewTestController {
     }
 
     @RequestMapping(value = "/test2", method = RequestMethod.POST)
-    @ServiceInfo(name = "BLOG.TestController.test2", description = "测试方法注册")
+//    @ServiceInfo(name = "BLOG.TestController.test2", description = "测试方法注册")
     public String test2 () {
         return null;
     }

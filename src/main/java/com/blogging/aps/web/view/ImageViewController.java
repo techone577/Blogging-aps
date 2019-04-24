@@ -26,9 +26,11 @@ public class ImageViewController {
         String path = "WEB-INF/image/"+imgId;
         File file = new File(request.getServletContext().getRealPath(path));
         ServletOutputStream out = response.getOutputStream();
-        FileInputStream fileInputStream = new FileInputStream(file);
-        BufferedOutputStream outputStream = new BufferedOutputStream(out);
+        FileInputStream fileInputStream = null;
+        BufferedOutputStream outputStream = null;
         try {
+            fileInputStream = new FileInputStream(file);
+            outputStream = new BufferedOutputStream(out);
             response.setContentType("multipart/form-data");
 
             byte[] buffer = new byte[1024];

@@ -259,5 +259,10 @@
     </set>
     where post_id = #{postId}
   </update>
+  <delete id="deletePostByPostId">
+    DELETE FROM post_info
+    WHERE
+    post_id =#{postId}
+  </delete>
 
 </mapper>

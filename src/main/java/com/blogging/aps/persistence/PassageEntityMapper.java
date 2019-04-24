@@ -10,4 +10,8 @@ public interface PassageEntityMapper {
     int insertSelective(PassageEntity record);
 
     PassageEntity selectPassageByPassageId(@Param("passageId") String passageId);
+
+    void updatePassageByPassageId(PassageEntity entity);
+
+    void deletePassageByPassageId(@Param("passageId") String passageId);
 }
