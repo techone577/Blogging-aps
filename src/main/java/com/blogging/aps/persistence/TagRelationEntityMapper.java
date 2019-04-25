@@ -28,4 +28,6 @@ public interface TagRelationEntityMapper {
     void updateByPostIdSelective(TagRelationEntity tagRelationEntity);
 
     void delByPostIdAndTagId(@Param("postId") String postId, @Param("tagId") Integer tagId);
+
+    void deleteByTagId(@Param("tagId") Integer tagId);
 }

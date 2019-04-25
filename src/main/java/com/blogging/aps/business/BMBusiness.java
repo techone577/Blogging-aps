@@ -54,82 +54,100 @@ public class BMBusiness {
      * 查询所有tag
      */
     private Response queryTags() {
-        List<TagAmountDTO> tagAmountDTOS = tagService.queryTagAmount();
-        if (null == tagAmountDTOS || tagAmountDTOS.size() == 0) {
-            return ResponseBuilder.build(true, "标签列表为空");
+        List<TagAmountDTO> tagAmountDTOS = tagService.queryAllTagAmount();
+        List<BMTagQueryRespDTO> tagQueryRespDTOS = new ArrayList<>();
+        List<TagEntity> allTags = tagService.queryTagList();
+        if (null == allTags || allTags.size() == 0)
+            return ResponseBuilder.build(true, null);
+        if (null != tagAmountDTOS && tagAmountDTOS.size() > 0) {
+            tagAmountDTOS = tagAmountDTOS.stream().sorted(Comparator.comparing(TagAmountDTO::getTagId)).collect(Collectors.toList());
+            List<TagEntity> tagEntities = tagService.queryByTagIdList(tagAmountDTOS.stream().map(item -> item.getTagId()).collect(Collectors.toList()));
+            tagQueryRespDTOS = buildTagRespDTO(tagEntities, tagAmountDTOS);
+            Set<Integer> idSet = tagEntities.stream().map(i->i.getId()).collect(Collectors.toSet());
+            List<TagEntity> zeroTags = allTags.stream().filter(i -> !idSet.contains(i.getId())).collect(Collectors.toList());
+            if (null != zeroTags) {
+                for (TagEntity entity : zeroTags)
+                    tagQueryRespDTOS.add(buiTagQueryRespDTO(entity, 0));
+            }
+        } else {
+            for (TagEntity entity : allTags)
+                tagQueryRespDTOS.add(buiTagQueryRespDTO(entity, 0));
         }
-        tagAmountDTOS = tagAmountDTOS.stream().sorted(Comparator.comparing(TagAmountDTO::getTagId)).collect(Collectors.toList());
-        List<TagEntity> tagEntities = tagService.queryByTagIdList(tagAmountDTOS.stream().map(item -> item.getTagId()).collect(Collectors.toList()));
-        List<BMTagQueryRespDTO> tagQueryRespDTOS = buildTagRespDTO(tagEntities, tagAmountDTOS);
         return ResponseBuilder.build(true, tagQueryRespDTOS);
     }
 
     /**
      * 按照参数查询tag
+     *
      * @param dto
      * @return
      */
-    public Response queryTagByParam(TagQueryDTO dto){
-        if(null == dto || StringUtils.isBlank(dto.getName()))
+    public Response queryTagByParam(TagQueryDTO dto) {
+        if (null == dto || StringUtils.isBlank(dto.getName()))
             return queryTags();
         List<TagAmountDTO> tagAmountDTOS = tagService.queryTagAmount();
         List<TagEntity> tagList = tagService.queryTagByName(dto.getName());
-        if(null == tagList || tagList.size() == 0)
-            return ResponseBuilder.build(true,null);
+        if (null == tagList || tagList.size() == 0)
+            return ResponseBuilder.build(true, null);
         TagEntity tagEntity = tagList.get(0);
-        Optional<TagAmountDTO> optional = tagAmountDTOS.stream().filter(i->i.getTagId() == tagList.get(0).getId()).findAny();
+        Optional<TagAmountDTO> optional = tagAmountDTOS.stream().filter(i -> i.getTagId() == tagList.get(0).getId()).findAny();
         BMTagQueryRespDTO respDTO = new BMTagQueryRespDTO();
-        if(optional.isPresent())
+        if (optional.isPresent())
             respDTO.setPostNum(optional.get().getAmount());
         respDTO.setTagId(tagEntity.getId());
         respDTO.setTagName(tagEntity.getTagName());
         respDTO.setUpdateTime(DateUtils.formatDateTime(tagEntity.getUpdateTime()));
         respDTO.setAddTime(DateUtils.formatDateTime(tagEntity.getAddTime()));
-        List<BMTagQueryRespDTO> respDTOS = new ArrayList<BMTagQueryRespDTO>(){{
+        List<BMTagQueryRespDTO> respDTOS = new ArrayList<BMTagQueryRespDTO>() {{
             add(respDTO);
         }};
-        return ResponseBuilder.build(true,respDTOS);
+        return ResponseBuilder.build(true, respDTOS);
     }
 
-    public Response queryTagList(){
+    public Response queryTagList() {
         List<TagEntity> list = tagService.queryTagList();
-        if(null == list || list.size() == 0)
-            return ResponseBuilder.build(true,null);
-        List<String> namList = list.stream().map(item-> item.getTagName()).collect(Collectors.toList());
-        Map<String,Object> map = new HashMap<>();
-        map.put("tag",namList);
-        return ResponseBuilder.build(true,map);
+        if (null == list || list.size() == 0)
+            return ResponseBuilder.build(true, null);
+        List<String> namList = list.stream().map(item -> item.getTagName()).collect(Collectors.toList());
+        Map<String, Object> map = new HashMap<>();
+        map.put("tag", namList);
+        return ResponseBuilder.build(true, map);
     }
+
     private List<BMTagQueryRespDTO> buildTagRespDTO(List<TagEntity> tagEntities, List<TagAmountDTO> tagAmountDTOS) {
         List<BMTagQueryRespDTO> respDTOS = new ArrayList<>();
         for (int i = 0; i < tagEntities.size(); ++i) {
-            BMTagQueryRespDTO dto = new BMTagQueryRespDTO();
-            TagEntity entity = tagEntities.get(i);
-            dto.setTagId(entity.getId());
-            dto.setTagName(entity.getTagName());
-            dto.setAddTime(DateUtils.formatDateTime(entity.getAddTime()));
-            dto.setUpdateTime(DateUtils.formatDateTime(entity.getUpdateTime()));
-            dto.setPostNum(tagAmountDTOS.get(i).getAmount());
-            respDTOS.add(dto);
+            respDTOS.add(buiTagQueryRespDTO(tagEntities.get(i), tagAmountDTOS.get(i).getAmount()));
         }
         return respDTOS;
+    }
+
+    private BMTagQueryRespDTO buiTagQueryRespDTO(TagEntity entity, Integer amount) {
+        BMTagQueryRespDTO dto = new BMTagQueryRespDTO();
+        dto.setTagId(entity.getId());
+        dto.setTagName(entity.getTagName());
+        dto.setAddTime(DateUtils.formatDateTime(entity.getAddTime()));
+        dto.setUpdateTime(DateUtils.formatDateTime(entity.getUpdateTime()));
+        dto.setPostNum(amount);
+        return dto;
     }
 
 
     /**
      * 查询blog 编辑器使用
+     *
      * @param reqDTO
      * @return
      */
-    public Response queryBlog(PostQueryReqDTO reqDTO){
+    public Response queryBlog(PostQueryReqDTO reqDTO) {
         String postId = reqDTO.getPostId();
-        PostInfoEntity postInfoEntity = postService.queryPostByPostId(postId,null);
+        PostInfoEntity postInfoEntity = postService.queryPostByPostId(postId, null);
         if (null == postInfoEntity)
             throw new UnifiedException(ErrorCodeEnum.POST_NOT_EXIST_ERROR);
 
         PassageEntity passageEntity = postService.queryPassageByPassageId(postInfoEntity.getPassageId());
         List<String> tags = postBusiness.getPostTags(postId);
-        BMBlogQueryRespDTO respDTO = new BMBlogQueryRespDTO(){
+        BMBlogQueryRespDTO respDTO = new BMBlogQueryRespDTO() {
             {
                 setTitle(postInfoEntity.getTitle());
                 setContent(passageEntity.getContent());
@@ -137,11 +155,12 @@ public class BMBusiness {
                 setTagList(tags);
             }
         };
-        return ResponseBuilder.build(true,respDTO);
+        return ResponseBuilder.build(true, respDTO);
     }
 
     /**
      * 查询文章列表（包括未发布、已发布，不包含回收站）
+     *
      * @param queryDTO
      * @return
      */
@@ -154,6 +173,7 @@ public class BMBusiness {
 
     /**
      * 查询草稿箱
+     *
      * @param queryDTO
      * @return
      */
@@ -166,10 +186,11 @@ public class BMBusiness {
 
     /**
      * 查询回收站
+     *
      * @param queryDTO
      * @return
      */
-    public Response queryRubbish(BMRubbishQueryDTO queryDTO){
+    public Response queryRubbish(BMRubbishQueryDTO queryDTO) {
         List<PostInfoEntity> entities = postService.BMRubbishQuery(queryDTO);
         PageInfo pageInfo = new PageInfo(entities);
         return buildPostTable(pageInfo);
@@ -193,7 +214,7 @@ public class BMBusiness {
     public Response releasePost(BMPostModifyReqDTO reqDTO) {
         if (null == reqDTO || StringUtils.isBlank(reqDTO.getPostId()))
             return ResponseBuilder.build(false, "请求PostId为空");
-        PostInfoEntity postInfoEntity = postService.queryPostByPostId(reqDTO.getPostId(),null);
+        PostInfoEntity postInfoEntity = postService.queryPostByPostId(reqDTO.getPostId(), null);
         if (null == postInfoEntity)
             return ResponseBuilder.build(false, "文章不存在");
         if (1 == postInfoEntity.getReleaseFlag() || 1 == postInfoEntity.getDelFlag())
@@ -205,7 +226,7 @@ public class BMBusiness {
             }
         };
         postService.updatePostByPostId(entity);
-        modifyTagRelation(reqDTO.getPostId(),0);
+        modifyTagRelation(reqDTO.getPostId(), 0);
         return ResponseBuilder.build(true, "发布成功");
     }
 
@@ -215,7 +236,7 @@ public class BMBusiness {
     public Response offlinePost(BMPostModifyReqDTO reqDTO) {
         if (null == reqDTO || StringUtils.isBlank(reqDTO.getPostId()))
             return ResponseBuilder.build(false, "请求PostId为空");
-        PostInfoEntity postInfoEntity = postService.queryPostByPostId(reqDTO.getPostId(),null);
+        PostInfoEntity postInfoEntity = postService.queryPostByPostId(reqDTO.getPostId(), null);
         if (null == postInfoEntity)
             return ResponseBuilder.build(false, "文章不存在");
         if (0 == postInfoEntity.getReleaseFlag() || 1 == postInfoEntity.getDelFlag())
@@ -227,9 +248,10 @@ public class BMBusiness {
             }
         };
         postService.updatePostByPostId(entity);
-        modifyTagRelation(reqDTO.getPostId(),1);
+        modifyTagRelation(reqDTO.getPostId(), 1);
         return ResponseBuilder.build(true, "下线成功");
     }
+
     /**
      * 文章逻辑删除
      */
@@ -250,12 +272,13 @@ public class BMBusiness {
         };
         postService.updatePostByPostId(entity);
         //逻辑删除tag-post对应
-        modifyTagRelation(reqDTO.getPostId(),1);
+        modifyTagRelation(reqDTO.getPostId(), 1);
         return ResponseBuilder.build(true, "移动成功");
     }
 
     /**
      * 文章恢复
+     *
      * @param reqDTO
      * @return
      */
@@ -266,7 +289,7 @@ public class BMBusiness {
         if (null == postInfoEntity)
             return ResponseBuilder.build(false, "文章不存在");
         if (0 == postInfoEntity.getDelFlag())
-           throw new UnifiedException(ErrorCodeEnum.POST_STATE_ERROR);
+            throw new UnifiedException(ErrorCodeEnum.POST_STATE_ERROR);
         PostInfoEntity entity = new PostInfoEntity() {
             {
                 setPostId(reqDTO.getPostId());
@@ -276,7 +299,7 @@ public class BMBusiness {
         };
         postService.updatePostByPostId(entity);
         //恢复tag-post对应
-        modifyTagRelation(reqDTO.getPostId(),0);
+        modifyTagRelation(reqDTO.getPostId(), 0);
         return ResponseBuilder.build(true, "恢复成功");
     }
 
@@ -441,14 +464,14 @@ public class BMBusiness {
         //更新tag
         //删除
         List<String> orgTags = postBusiness.getPostTags(postId);
-        if(null != orgTags) {
+        if (null != orgTags) {
             orgTags.stream().forEach(i -> {
                 deleteTagRelation(postId, i);
             });
         }
         //添加
         List<String> tags = addDTO.getTags();
-        if(null != tags) {
+        if (null != tags) {
             tags.stream().forEach(i -> {
                 addTag(i, postId);
             });
@@ -458,7 +481,6 @@ public class BMBusiness {
 
     /**
      * 文章删除
-     *
      */
     public Response postDelete(BMPostModifyReqDTO reqDTO) {
         if (null == reqDTO || StringUtils.isBlank(reqDTO.getPostId()))
@@ -473,7 +495,7 @@ public class BMBusiness {
             postService.deletePassageByPassageId(passageId);
         //删除tags
         List<String> tags = postBusiness.getPostTagsWithoutDel(postInfoEntity.getPostId());
-        if(null != tags) {
+        if (null != tags) {
             tags.stream().forEach(i -> {
                 try {
                     deleteTagRelation(postInfoEntity.getPostId(), i);
@@ -483,6 +505,23 @@ public class BMBusiness {
         }
         //删除post
         postService.deletePostByPostId(reqDTO.getPostId());
+        return ResponseBuilder.build(true, "删除成功");
+    }
+
+    /**
+     * 删除tag
+     */
+    public Response deleteTag(BMTagDelReqDTO reqDTO) {
+        if (null == reqDTO || null == reqDTO.getTagId())
+            throw new UnifiedException(ErrorCodeEnum.PARAM_ILLEGAL_ERROR, "tagId为空");
+        Integer tagId = reqDTO.getTagId();
+        TagEntity entity = tagService.queryTagById(tagId);
+        if (null == entity)
+            throw new UnifiedException(ErrorCodeEnum.TAG_NOT_EXIST_ERROR);
+        List<TagRelationEntity> tagRelationEntities = tagService.queryTagRelationByTagId(tagId);
+        if (null != tagRelationEntities && tagRelationEntities.size() > 0)
+            tagService.deleteRelationByTagId(tagId);
+        tagService.deleteTagById(tagId);
         return ResponseBuilder.build(true, "删除成功");
     }
 

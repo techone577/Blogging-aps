@@ -181,7 +181,7 @@ public class BackManagementController {
     }
 
     /**
-     * 文章添加tag
+     * 文章删除tag
      */
     @RequestMapping(value = "/delTagForPost", method = RequestMethod.POST)
     @ServiceInfo(name = "Blogging.APS.BMController.delTagForPost", description = "删除文章标签")
@@ -227,4 +227,17 @@ public class BackManagementController {
         LOG.info("删除文章出参：{}", JsonUtil.toString(response));
         return response;
     }
+
+    /**
+     * 删除标签
+     */
+    @RequestMapping(value = "/tagDelete", method = RequestMethod.POST)
+    @ServiceInfo(name = "Blogging.APS.BMController.tagDelete", description = "标签删除")
+    public Response tagDelete(@Json BMTagDelReqDTO reqDTO) {
+        LOG.info("删除文章入参：{}", JsonUtil.toString(reqDTO));
+        Response response = bmBusiness.deleteTag(reqDTO);
+        LOG.info("删除文章出参：{}", JsonUtil.toString(response));
+        return response;
+    }
+
 }

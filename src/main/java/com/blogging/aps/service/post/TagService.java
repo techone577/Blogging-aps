@@ -26,6 +26,19 @@ public class TagService {
         return tagEntityMapper.selectTagByName(name);
     }
 
+    public TagEntity queryTagById(Integer tagId) {
+        return tagEntityMapper.selectById(tagId);
+
+    }
+
+    public void deleteTagById(Integer tagId) {
+        tagEntityMapper.deleteById(tagId);
+    }
+
+    public void deleteRelationByTagId(Integer tagId) {
+        tagRelationEntityMapper.deleteByTagId(tagId);
+    }
+
     public void insertTag(TagEntity tagEntity) {
         tagEntityMapper.insertSelective(tagEntity);
     }
@@ -50,36 +63,36 @@ public class TagService {
         return tagEntityMapper.selectTagByIdList(tagIdList);
     }
 
-    public List<TagAmountDTO> queryTagAmount(){
+    public List<TagAmountDTO> queryTagAmount() {
         return tagRelationEntityMapper.selectTagAmount();
     }
 
-    public List<TagAmountDTO> queryAllTagAmount(){
+    public List<TagAmountDTO> queryAllTagAmount() {
         return tagRelationEntityMapper.selectAllTagAmount();
     }
 
-    public List<TagRelationEntity> queryTagReLationByTagIdPaging(Integer tagId,Integer pageNum, Integer pageSize){
-        PageHelper.startPage(pageNum,pageSize);
+    public List<TagRelationEntity> queryTagReLationByTagIdPaging(Integer tagId, Integer pageNum, Integer pageSize) {
+        PageHelper.startPage(pageNum, pageSize);
         return tagRelationEntityMapper.selectByTagIdPaging(tagId);
     }
 
-    public List<TagRelationEntity> queryTagRelationByTagId(Integer tagId){
+    public List<TagRelationEntity> queryTagRelationByTagId(Integer tagId) {
         return tagRelationEntityMapper.selectByTagId(tagId);
     }
 
-    public List<TagEntity> queryTagList(){
+    public List<TagEntity> queryTagList() {
         return tagEntityMapper.selectTagList();
     }
 
-    public void updateTagRelation(TagRelationEntity tagRelationEntity){
+    public void updateTagRelation(TagRelationEntity tagRelationEntity) {
         tagRelationEntityMapper.updateByPostIdSelective(tagRelationEntity);
     }
 
-    public void updateTag(TagEntity tagEntity){
+    public void updateTag(TagEntity tagEntity) {
         tagEntityMapper.updateByIdSelective(tagEntity);
     }
 
-    public void delTagForPost(String postId,Integer tagId){
-        tagRelationEntityMapper.delByPostIdAndTagId(postId,tagId);
+    public void delTagForPost(String postId, Integer tagId) {
+        tagRelationEntityMapper.delByPostIdAndTagId(postId, tagId);
     }
 }

@@ -156,4 +156,11 @@
     AND
     tag_id = #{tagId}
   </delete>
+
+  <delete id="deleteByTagId">
+    DELETE FROM tag_relation
+    WHERE del_flag = 0
+    AND
+    tag_id = #{tagId}
+  </delete>
 </mapper>

@@ -65,6 +65,21 @@
     tag_name = #{tagName}
   </select>
 
+  <select id="selectById" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+    SELECT
+    <include refid="Base_Column_List"/>
+    FROM tag
+    WHERE
+    del_flag = 0
+    AND
+    id = #{tagId}
+  </select>
+
+  <delete id="deleteById">
+    DELETE from tag
+    where id = #{tagId}
+  </delete>
+
   <select id="selectTagByIdList" resultMap="BaseResultMap">
     SELECT
     <include refid="Base_Column_List"/>
