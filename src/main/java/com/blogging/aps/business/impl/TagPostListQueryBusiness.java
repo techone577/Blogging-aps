@@ -41,6 +41,7 @@ public class TagPostListQueryBusiness extends AbstractPostListQueryBusiness {
         List<TagEntity> tagEntities = tagService.queryTagByName(tagName);
         if(null == tagEntities || tagEntities.size() == 0 ) {
             LOG.info("查询tag失败，不存在此tag:{}", queryDTO.getTypeValue());
+            //TODO 404
             return ResponseBuilder.build(true,"tag不存在！");
         }
         List<TagRelationEntity> tagRelationEntities = tagService.queryTagReLationByTagIdPaging(tagEntities.get(0).getId(),

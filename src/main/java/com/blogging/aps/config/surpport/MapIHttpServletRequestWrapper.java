@@ -25,7 +25,6 @@ public class MapIHttpServletRequestWrapper extends HttpServletRequestWrapper {
         //缓存请求body
         parameterMap = request.getParameterMap();
         requestBody = getRequestBody(request).getBytes(Charset.forName("UTF-8"));
-        System.out.println(Arrays.toString(requestBody));
     }
 
 
