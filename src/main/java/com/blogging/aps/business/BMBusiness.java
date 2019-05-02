@@ -3,12 +3,11 @@ package com.blogging.aps.business;
 
 import com.blogging.aps.business.manage.AbstractPostListQueryBusiness;
 import com.blogging.aps.model.dto.*;
+import com.blogging.aps.model.dto.BM.BMCategoryQueryRespDTO;
 import com.blogging.aps.model.entity.Response;
-import com.blogging.aps.model.entity.post.PassageEntity;
-import com.blogging.aps.model.entity.post.PostInfoEntity;
-import com.blogging.aps.model.entity.post.TagEntity;
-import com.blogging.aps.model.entity.post.TagRelationEntity;
+import com.blogging.aps.model.entity.post.*;
 import com.blogging.aps.model.enums.ErrorCodeEnum;
+import com.blogging.aps.service.post.CategoryService;
 import com.blogging.aps.service.post.TagService;
 import com.blogging.aps.service.post.PostService;
 import com.blogging.aps.support.exception.UnifiedException;
@@ -47,6 +46,9 @@ public class BMBusiness {
     private PostBusiness postBusiness;
 
     @Autowired
+    private CategoryService categoryService;
+
+    @Autowired
     private FactoryList<AbstractPostListQueryBusiness, String> postListQueryBusiness;
 
 
@@ -63,7 +65,7 @@ public class BMBusiness {
             tagAmountDTOS = tagAmountDTOS.stream().sorted(Comparator.comparing(TagAmountDTO::getTagId)).collect(Collectors.toList());
             List<TagEntity> tagEntities = tagService.queryByTagIdList(tagAmountDTOS.stream().map(item -> item.getTagId()).collect(Collectors.toList()));
             tagQueryRespDTOS = buildTagRespDTO(tagEntities, tagAmountDTOS);
-            Set<Integer> idSet = tagEntities.stream().map(i->i.getId()).collect(Collectors.toSet());
+            Set<Integer> idSet = tagEntities.stream().map(i -> i.getId()).collect(Collectors.toSet());
             List<TagEntity> zeroTags = allTags.stream().filter(i -> !idSet.contains(i.getId())).collect(Collectors.toList());
             if (null != zeroTags) {
                 for (TagEntity entity : zeroTags)
@@ -538,5 +540,56 @@ public class BMBusiness {
             throw new UnifiedException(ErrorCodeEnum.TAG_ALREADY_EXIST_ERROR);
         Integer tagId = entities.get(0).getId();
         tagService.delTagForPost(postId, tagId);
+    }
+
+    /**
+     * 添加分类
+     *
+     * @param addDTO
+     * @return
+     */
+    public Response addCategory(BMCategoryAddDTO addDTO) {
+        if (StringUtils.isBlank(addDTO.getName()))
+            throw new UnifiedException(ErrorCodeEnum.PARAM_ILLEGAL_ERROR, "分类名称为空");
+        CategoryEntity entity = categoryService.queryByName(addDTO.getName());
+        if (null != entity)
+            throw new UnifiedException(ErrorCodeEnum.CATEGORY_ALREADY_EXIT);
+        entity = new CategoryEntity() {
+            {
+                setName(addDTO.getName());
+                setCoverUrl(addDTO.getUrl());
+                setSummary(addDTO.getSummary());
+                setAddTime(new Date());
+                setDelFlag(0);
+                setPostNum(0);
+            }
+        };
+        categoryService.insertSelective(entity);
+        return ResponseBuilder.build(true, "添加成功");
+    }
+
+    /**
+     * 查询所有分类
+     * @return
+     */
+    public Response queryCategory() {
+        List<CategoryEntity> entities = categoryService.queryCategories();
+        if (null == entities || entities.size() == 0)
+            return ResponseBuilder.build(true, null);
+        List<BMCategoryQueryRespDTO> respDTOs = new ArrayList<>();
+        entities.forEach(i -> {
+            BMCategoryQueryRespDTO respDTO = new BMCategoryQueryRespDTO() {
+                {
+                    setId(i.getId());
+                    setName(i.getName());
+                    setCoverUrl(i.getCoverUrl());
+                    setAddTime(DateUtils.formatDateTime(i.getAddTime()));
+                    setUpdateTime(DateUtils.formatDateTime(i.getUpdateTime()));
+                    setPostNum(i.getPostNum());
+                }
+            };
+            respDTOs.add(respDTO);
+        });
+        return ResponseBuilder.build(true, respDTOs);
     }
 }

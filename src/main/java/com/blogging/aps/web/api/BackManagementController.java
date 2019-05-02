@@ -240,4 +240,22 @@ public class BackManagementController {
         return response;
     }
 
+    @RequestMapping(value = "/addCategory", method = RequestMethod.POST)
+    @ServiceInfo(name = "Blogging.APS.BMController.addCategory", description = "添加分类")
+    public Response addCategory(@Json BMCategoryAddDTO addDTO) {
+        LOG.info("添加分类入参：{}", JsonUtil.toString(addDTO));
+        Response response = bmBusiness.addCategory(addDTO);
+        LOG.info("添加分类出参：{}", JsonUtil.toString(response));
+        return response;
+    }
+
+    @RequestMapping(value = "/queryCategory", method = RequestMethod.POST)
+    @ServiceInfo(name = "Blogging.APS.BMController.queryCategory", description = "查询分类")
+    public Response queryCategory() {
+        LOG.info("查询分类");
+        Response response = bmBusiness.queryCategory();
+        LOG.info("查询分类出参：{}", JsonUtil.toString(response));
+        return response;
+    }
+
 }

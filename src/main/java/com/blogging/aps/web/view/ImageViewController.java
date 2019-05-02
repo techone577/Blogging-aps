@@ -21,9 +21,19 @@ public class ImageViewController {
 
     private static final Logger LOG = LoggerFactory.getLogger(ImageViewController.class);
 
-    @RequestMapping(value = "/showImg",method = RequestMethod.GET)
-    public void imageShow(@RequestParam String imgId, HttpServletRequest request, HttpServletResponse response) throws Exception{
-        String path = "WEB-INF/image/"+imgId;
+    @RequestMapping(value = "/showImg", method = RequestMethod.GET)
+    public void postImageShow(@RequestParam String imgId, HttpServletRequest request, HttpServletResponse response) throws Exception {
+        String path = "WEB-INF/image/post/" + imgId;
+        imageShow(path, request, response);
+    }
+
+    @RequestMapping(value = "/showCoverImg", method = RequestMethod.GET)
+    public void coverImageShow(@RequestParam String imgId, HttpServletRequest request, HttpServletResponse response) throws Exception {
+        String path = "WEB-INF/image/cover/" + imgId;
+        imageShow(path, request, response);
+    }
+
+    private void imageShow(String path, HttpServletRequest request, HttpServletResponse response) throws Exception {
         File file = new File(request.getServletContext().getRealPath(path));
         ServletOutputStream out = response.getOutputStream();
         FileInputStream fileInputStream = null;

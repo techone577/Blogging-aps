@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.blogging.aps.persistence.CategoryEntityMapper" >
+  <resultMap id="BaseResultMap" type="com.blogging.aps.model.entity.post.CategoryEntity" >
+    <result column="id" property="id" />
+    <result column="name" property="name"/>
+    <result column="cover_url" property="coverUrl"/>
+    <result column="summary" property="summary"/>
+    <result column="post_num" property="postNum" />
+    <result column="add_time" property="addTime" />
+    <result column="update_time" property="updateTime" />
+    <result column="del_flag" property="delFlag" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, name, cover_url, summary, post_num, add_time, update_time, del_flag
+  </sql>
+  <insert id="insert" parameterType="com.blogging.aps.model.entity.post.CategoryEntity" >
+    insert into category (id, name, cover_url, 
+      summary, post_num, add_time, 
+      update_time, del_flag)
+    values (#{id}, #{name}, #{coverUrl}, 
+      #{summary}, #{postNum}, #{addTime}, 
+      #{updateTime}, #{delFlag})
+  </insert>
+  <insert id="insertSelective" parameterType="com.blogging.aps.model.entity.post.CategoryEntity" >
+    insert into category
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="name != null" >
+        name,
+      </if>
+      <if test="coverUrl != null" >
+        cover_url,
+      </if>
+      <if test="summary != null" >
+        summary,
+      </if>
+      <if test="postNum != null" >
+        post_num,
+      </if>
+      <if test="addTime != null" >
+        add_time,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+      <if test="delFlag != null" >
+        del_flag,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id},
+      </if>
+      <if test="name != null" >
+        #{name},
+      </if>
+      <if test="coverUrl != null" >
+        #{coverUrl},
+      </if>
+      <if test="summary != null" >
+        #{summary},
+      </if>
+      <if test="postNum != null" >
+        #{postNum},
+      </if>
+      <if test="addTime != null" >
+        #{addTime},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime},
+      </if>
+      <if test="delFlag != null" >
+        #{delFlag},
+      </if>
+    </trim>
+  </insert>
+  <select id="selectByName" resultMap="BaseResultMap">
+    SELECT
+    <include refid="Base_Column_List"/>
+    FROM category
+    WHERE
+    name = #{name}
+  </select>
+  <select id="selectAllCategories" resultMap="BaseResultMap">
+    SELECT
+    <include refid="Base_Column_List"/>
+    FROM category
+  </select>
+  <update id="updateNumByName">
+    UPDATE category
+    SET post_num = #{num}
+    WHERE
+    name = #{name}
+  </update>
+</mapper>
