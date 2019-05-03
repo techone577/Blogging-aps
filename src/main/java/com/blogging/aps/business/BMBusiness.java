@@ -592,7 +592,7 @@ public class BMBusiness {
                     setCoverUrl(i.getCoverUrl());
                     setAddTime(DateUtils.formatDateTime(i.getAddTime()));
                     setUpdateTime(DateUtils.formatDateTime(i.getUpdateTime()));
-                    setPostNum(postBusiness.checkPostNum(i.getName(),true));
+                    setPostNum(postBusiness.checkPostNum(i.getName(), true));
                     setSummary(i.getSummary());
                 }
             };
@@ -650,6 +650,29 @@ public class BMBusiness {
         Map<String, Object> map = new HashMap<>();
         map.put("names", names);
         return ResponseBuilder.build(true, map);
+    }
+
+    /**
+     * 删除分类
+     *
+     * @param modifyDTO
+     * @return
+     */
+    public Response deleteCategory(BMCategoryModifyDTO modifyDTO) {
+        if (null == modifyDTO || null == modifyDTO.getId())
+            throw new UnifiedException(ErrorCodeEnum.PARAM_ILLEGAL_ERROR);
+        CategoryEntity entity = categoryService.queryById(modifyDTO.getId());
+        if (null == entity)
+            throw new UnifiedException(ErrorCodeEnum.CATEGORY_NOT_EXIT_ERROR);
+        /**
+         * 设置一个默认分类 避免展示信息时候不美观
+         */
+        if ("博客".equals(entity.getName()))
+            throw new UnifiedException(ErrorCodeEnum.CATEGORY_CANNOT_DEL_ERROR);
+        String name = entity.getName();
+        postService.updatePostCategory(name, "博客");
+        categoryService.deleteCategory(modifyDTO.getId());
+        return ResponseBuilder.build(true, "删除成功");
     }
 
 }

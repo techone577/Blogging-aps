@@ -47,4 +47,8 @@ public class CategoryService {
     public CategoryEntity queryById(Integer id) {
         return categoryEntityMapper.selectById(id);
     }
+
+    public void deleteCategory(Integer id) {
+        categoryEntityMapper.deleteById(id);
+    }
 }

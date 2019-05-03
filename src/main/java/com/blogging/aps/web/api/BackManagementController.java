@@ -14,6 +14,7 @@ import com.blogging.aps.support.utils.JsonUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -288,6 +289,18 @@ public class BackManagementController {
         LOG.info("（BM）查询分类下拉信息!");
         Response response = bmBusiness.queryCategoriesSelect();
         LOG.info("（BM）查询分类下拉信息出参：{}", JsonUtil.toString(response));
+        return response;
+    }
+
+    /**
+     * 删除分类信息
+     */
+    @RequestMapping(value = "/deleteCategory", method = RequestMethod.POST)
+    @ServiceInfo(name = "Blogging.APS.BMController.deleteCategory", description = "删除分类")
+    public Response deleteCategory(@Json BMCategoryModifyDTO modifyDTO) {
+        LOG.info("（BM）删除分类入参：{}", JsonUtil.toString(modifyDTO));
+        Response response = bmBusiness.deleteCategory(modifyDTO);
+        LOG.info("（BM）删除分类出参：{}", JsonUtil.toString(response));
         return response;
     }
 

@@ -20,5 +20,7 @@ public interface CategoryEntityMapper {
 
     void updateByIdSelective(CategoryEntity entity);
 
+    void deleteById(@Param("id") Integer id);
+
     List<CategoryEntity> selectAllCategories();
 }

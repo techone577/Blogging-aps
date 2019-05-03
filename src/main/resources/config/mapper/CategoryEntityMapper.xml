@@ -137,4 +137,9 @@
     </set>
     where id = #{id}
   </update>
+
+  <delete id="deleteById">
+    DELETE FROM category
+    WHERE id = #{id}
+  </delete>
 </mapper>

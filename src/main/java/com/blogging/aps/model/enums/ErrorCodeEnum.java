@@ -33,7 +33,8 @@ public enum ErrorCodeEnum {
     TITLE_EMPTY_ERROR(30004, "文章标题为空"),
     POST_NOT_EXIST_ERROR(30005, "文章不存在"),
     CATEGORY_ALREADY_EXIT_ERROR(30006, "分类已存在"),
-    CATEGORY_NOT_EXIT_ERROR(30007, "分类不存在");
+    CATEGORY_NOT_EXIT_ERROR(30007, "分类不存在"),
+    CATEGORY_CANNOT_DEL_ERROR(30008, "分类不可删除");
 
 
     private int code;

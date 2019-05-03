@@ -259,6 +259,9 @@
       <if test="summary != null" >
         summary = #{summary},
       </if>
+      <if test="memberId != null" >
+        member_id = #{memberId},
+      </if>
       <if test="updateTime != null" >
         update_time = #{updateTime},
       </if>
