@@ -87,15 +87,6 @@ public class PostController {
     }
 
     /**
-     * 文章更新
-     */
-    @RequestMapping(value = "/postUpdate", method = RequestMethod.POST)
-    @ServiceInfo(name = "Blogging.APS.PostController.postUpdate", description = "文章更新")
-    public Response postUpdate () {
-        return null;
-    }
-
-    /**
      * 文章拉取
      */
     @RequestMapping(value = "/postCatch", method = RequestMethod.POST)
@@ -117,5 +108,17 @@ public class PostController {
         Response resp = postBusiness.queryAllTags();
         LOG.info("查询所有tag出参:{}", JsonUtil.toString(resp));
         return resp;
+    }
+
+    /**
+     * 查询所有分类信息
+     */
+    @RequestMapping(value = "/queryCategoryInfos", method = RequestMethod.POST)
+    @ServiceInfo(name = "Blogging.APS.PostController.queryCategoryInfos", description = "查询所有分类信息")
+    public Response queryCategoryInfos() {
+        LOG.info("查询所有分类信息");
+        Response response = postBusiness.queryCategoryInfos();
+        LOG.info("查询所有分类信息出参：{}", JsonUtil.toString(response));
+        return response;
     }
 }

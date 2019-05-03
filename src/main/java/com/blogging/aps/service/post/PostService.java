@@ -61,6 +61,11 @@ public class PostService {
         return passageEntityMapper.selectPassageByPassageId(passageId);
     }
 
+    public List<PostInfoEntity> queryPostByCategory(PostPagingQueryDTO queryDTO) {
+        PageHelper.startPage(queryDTO.getPageNum(), queryDTO.getPageSize());
+        return postInfoEntityMapper.selectPostByCategory(queryDTO.getTypeValue());
+    }
+
     /**
      * 查询上一篇文章
      */
@@ -150,6 +155,13 @@ public class PostService {
      */
     public void deletePostByPostId(String postId) {
         postInfoEntityMapper.deletePostByPostId(postId);
+    }
+
+    /**
+     * 更新同一分类文章的分类名称
+     */
+    public void updatePostCategory(String oldName, String newName) {
+        postInfoEntityMapper.updateByCategory(oldName, newName);
     }
 
 }

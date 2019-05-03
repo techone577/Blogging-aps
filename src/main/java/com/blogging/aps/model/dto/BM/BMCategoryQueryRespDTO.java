@@ -12,6 +12,8 @@ public class BMCategoryQueryRespDTO {
 
     private String coverUrl;
 
+    private String summary;
+
     private Integer postNum;
 
     private String addTime;
@@ -40,6 +42,14 @@ public class BMCategoryQueryRespDTO {
 
     public void setCoverUrl(String coverUrl) {
         this.coverUrl = coverUrl;
+    }
+
+    public String getSummary() {
+        return summary;
+    }
+
+    public void setSummary(String summary) {
+        this.summary = summary;
     }
 
     public Integer getPostNum() {

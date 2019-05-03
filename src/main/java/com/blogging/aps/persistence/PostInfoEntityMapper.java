@@ -17,6 +17,8 @@ public interface PostInfoEntityMapper {
 
     PostInfoEntity selectPostByPostIdWithoutDel(@Param("postId") String postId);
 
+    List<PostInfoEntity> selectPostByCategory(@Param("category") String category);
+
     PostInfoEntity selectPreviousPost(@Param("id") Integer id, @Param("postId") String postId);
 
     PostInfoEntity selectNextPost(@Param("id") Integer id, @Param("postId") String postId);
@@ -34,4 +36,6 @@ public interface PostInfoEntityMapper {
     void updateByPrimaryKeySelective(PostInfoEntity postInfoEntity);
 
     void deletePostByPostId(@Param("postId") String postId);
+
+    void updateByCategory(@Param("oldName") String oldName, @Param("newName") String newName);
 }

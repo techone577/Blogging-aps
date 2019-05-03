@@ -8,6 +8,8 @@ public class BlogQueryRespDTO {
 
     private String title;
 
+    private String category;
+
     private PostInfoDTO nextPost;
 
     private PostInfoDTO previousPost;
@@ -36,6 +38,14 @@ public class BlogQueryRespDTO {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
     }
 
     public PostInfoDTO getNextPost() {

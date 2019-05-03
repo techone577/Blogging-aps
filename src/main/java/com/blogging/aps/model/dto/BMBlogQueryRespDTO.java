@@ -12,6 +12,8 @@ public class BMBlogQueryRespDTO {
 
     private String content;
 
+    private String category;
+
     private String summary;
 
     private List<String> tagList;
@@ -30,6 +32,14 @@ public class BMBlogQueryRespDTO {
 
     public void setContent(String content) {
         this.content = content;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
     }
 
     public String getSummary() {

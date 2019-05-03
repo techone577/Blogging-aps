@@ -3,6 +3,7 @@ package com.blogging.aps.business;
 
 import com.blogging.aps.business.manage.AbstractPostListQueryBusiness;
 import com.blogging.aps.model.dto.*;
+import com.blogging.aps.model.dto.BM.BMCategoryModifyDTO;
 import com.blogging.aps.model.dto.BM.BMCategoryQueryRespDTO;
 import com.blogging.aps.model.entity.Response;
 import com.blogging.aps.model.entity.post.*;
@@ -21,6 +22,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.servlet.http.HttpServletRequest;
+import java.io.File;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -154,6 +157,7 @@ public class BMBusiness {
                 setTitle(postInfoEntity.getTitle());
                 setContent(passageEntity.getContent());
                 setSummary(postInfoEntity.getSummary());
+                setCategory(postInfoEntity.getCategory());
                 setTagList(tags);
             }
         };
@@ -443,6 +447,8 @@ public class BMBusiness {
         postInfoEntity.setSummary(addDTO.getSummary());
         postInfoEntity.setTitle(addDTO.getTitle());
         postInfoEntity.setMemberId(addDTO.getMemberId());
+        postInfoEntity.setCategory(addDTO.getCategory());
+        postInfoEntity.setMemberId(addDTO.getMemberId());
         postService.updatePostByPostId(postInfoEntity);
 
         //更新passage
@@ -553,7 +559,7 @@ public class BMBusiness {
             throw new UnifiedException(ErrorCodeEnum.PARAM_ILLEGAL_ERROR, "分类名称为空");
         CategoryEntity entity = categoryService.queryByName(addDTO.getName());
         if (null != entity)
-            throw new UnifiedException(ErrorCodeEnum.CATEGORY_ALREADY_EXIT);
+            throw new UnifiedException(ErrorCodeEnum.CATEGORY_ALREADY_EXIT_ERROR);
         entity = new CategoryEntity() {
             {
                 setName(addDTO.getName());
@@ -570,6 +576,7 @@ public class BMBusiness {
 
     /**
      * 查询所有分类
+     *
      * @return
      */
     public Response queryCategory() {
@@ -585,11 +592,64 @@ public class BMBusiness {
                     setCoverUrl(i.getCoverUrl());
                     setAddTime(DateUtils.formatDateTime(i.getAddTime()));
                     setUpdateTime(DateUtils.formatDateTime(i.getUpdateTime()));
-                    setPostNum(i.getPostNum());
+                    setPostNum(postBusiness.checkPostNum(i.getName(),true));
+                    setSummary(i.getSummary());
                 }
             };
             respDTOs.add(respDTO);
         });
         return ResponseBuilder.build(true, respDTOs);
     }
+
+    /**
+     * 更新分类信息
+     *
+     * @param dto
+     * @return
+     */
+    public Response modifyCategory(BMCategoryModifyDTO dto, HttpServletRequest request) {
+        if (null == dto.getId())
+            throw new UnifiedException(ErrorCodeEnum.PARAM_ILLEGAL_ERROR);
+        CategoryEntity entity = categoryService.queryById(dto.getId());
+        if (null == entity)
+            throw new UnifiedException(ErrorCodeEnum.CATEGORY_NOT_EXIT_ERROR);
+        CategoryEntity newEntity = new CategoryEntity() {
+            {
+                setId(dto.getId());
+                setSummary(dto.getSummary());
+                setCoverUrl(dto.getCoverUrl());
+                setName(dto.getName());
+            }
+        };
+        if (!newEntity.getName().equals(entity.getName())) {
+            //更新文章分类
+            postService.updatePostCategory(entity.getName(), newEntity.getName());
+        }
+        if (!entity.getCoverUrl().equals(newEntity.getCoverUrl())) {
+            //删除老封面
+            String name = entity.getCoverUrl().split("\\?")[1].split("=")[1];
+            String path = "WEB-INF/image/cover/" + name;
+            File file = new File(request.getServletContext().getRealPath(path));
+            if (!file.delete())
+                LOG.info("封面删除失败:{}", name);
+        }
+        categoryService.updateByIdSelecttive(newEntity);
+        return ResponseBuilder.build(true, "更新成功");
+    }
+
+    /**
+     * 查询分类下拉框
+     *
+     * @return
+     */
+    public Response queryCategoriesSelect() {
+        List<CategoryEntity> entities = categoryService.queryCategories();
+        List<String> names = null;
+        if (null != entities)
+            names = entities.stream().map(i -> i.getName()).collect(Collectors.toList());
+        Map<String, Object> map = new HashMap<>();
+        map.put("names", names);
+        return ResponseBuilder.build(true, map);
+    }
+
 }

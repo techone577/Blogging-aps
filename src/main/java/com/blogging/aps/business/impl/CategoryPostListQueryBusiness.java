@@ -6,12 +6,12 @@ import com.blogging.aps.model.dto.HomePagePostListDTO;
 import com.blogging.aps.model.dto.PostListQueryRespDTO;
 import com.blogging.aps.model.dto.PostPagingQueryDTO;
 import com.blogging.aps.model.entity.Response;
+import com.blogging.aps.model.entity.post.CategoryEntity;
 import com.blogging.aps.model.entity.post.PostInfoEntity;
-import com.blogging.aps.model.entity.post.TagEntity;
-import com.blogging.aps.model.entity.post.TagRelationEntity;
 import com.blogging.aps.model.enums.ErrorCodeEnum;
-import com.blogging.aps.service.post.TagService;
+import com.blogging.aps.service.post.CategoryService;
 import com.blogging.aps.service.post.PostService;
+import com.blogging.aps.service.post.TagService;
 import com.blogging.aps.support.exception.UnifiedException;
 import com.blogging.aps.support.utils.ResponseBuilder;
 import com.github.pagehelper.PageInfo;
@@ -21,44 +21,41 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
-import java.util.stream.Collectors;
+
+/**
+ * @author techoneduan
+ * @date 2019/5/3
+ */
 
 @Component
-public class TagPostListQueryBusiness extends AbstractPostListQueryBusiness {
+public class CategoryPostListQueryBusiness extends AbstractPostListQueryBusiness {
 
-    private static final Logger LOG = LoggerFactory.getLogger(TagPostListQueryBusiness.class);
+    private static final Logger LOG = LoggerFactory.getLogger(CategoryPostListQueryBusiness.class);
 
     @Autowired
     private PostService postService;
 
     @Autowired
-    private TagService tagService;
+    private PostBusiness postBusiness;
 
     @Autowired
-    private PostBusiness postBusiness;
+    private CategoryService categoryService;
 
     @Override
     public Response queryPostList(PostPagingQueryDTO queryDTO) {
-        String tagName = queryDTO.getTypeValue();
-        List<TagEntity> tagEntities = tagService.queryTagByName(tagName);
-        if (null == tagEntities || tagEntities.size() == 0) {
-            LOG.info("查询tag失败，不存在此tag:{}", queryDTO.getTypeValue());
-            //TODO 404
+        String category = queryDTO.getTypeValue();
+        CategoryEntity categoryEntity = categoryService.queryByName(category);
+        if (null == categoryEntity)
             throw new UnifiedException(ErrorCodeEnum.FOUR_ZERO_FOUR_ERROR);
-        }
-        List<TagRelationEntity> tagRelationEntities = tagService.queryTagReLationByTagIdPaging(tagEntities.get(0).getId(),
-                queryDTO.getPageNum(), queryDTO.getPageSize());
-        PageInfo pageInfo = new PageInfo(tagRelationEntities);
-        List<String> postIds = tagRelationEntities
-                .stream().map(i -> i.getPostId()).collect(Collectors.toList());
-        List<PostInfoEntity> postInfoEntities = postService.queryPostListByIdList(postIds, queryDTO.getReleaseFlag());
-        List<HomePagePostListDTO> homePagePostListDTOS = postBusiness.buildHomePagePostRespDTO(postInfoEntities);
+        List<PostInfoEntity> postInfoEntityList = postService.queryPostByCategory(queryDTO);
+        PageInfo pageInfo = new PageInfo(postInfoEntityList);
+        List<HomePagePostListDTO> homePagePostListDTOS = postBusiness.buildHomePagePostRespDTO(postInfoEntityList);
         PostListQueryRespDTO respDTO = new PostListQueryRespDTO() {
             {
-                setPostList(homePagePostListDTOS);
-                setTotalNum(pageInfo.getTotal());
                 setTagInfoList(postBusiness.queryTagInfoList());
                 setCategoryInfoList(postBusiness.queryCategoryList(true));
+                setPostList(homePagePostListDTOS);
+                setTotalNum(pageInfo.getTotal());
             }
         };
         Response resp = ResponseBuilder.build(true, respDTO);
@@ -67,6 +64,6 @@ public class TagPostListQueryBusiness extends AbstractPostListQueryBusiness {
 
     @Override
     public boolean matching(String factor) {
-        return "tag".equals(factor);
+        return "category".equals(factor);
     }
 }

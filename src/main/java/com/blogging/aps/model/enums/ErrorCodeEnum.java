@@ -21,6 +21,7 @@ public enum ErrorCodeEnum {
     SYSTEM_ERROR(10003, "系统异常"),
     INTERFACE_ERROR(10004, "接口异常"),
     DB_ERROR(10005, "数据库异常"),
+    FOUR_ZERO_FOUR_ERROR(10006, "404"),
 
     /**
      * BM error
@@ -31,7 +32,8 @@ public enum ErrorCodeEnum {
     TAG_NOT_EXIST_ERROR(30003, "标签不存在"),
     TITLE_EMPTY_ERROR(30004, "文章标题为空"),
     POST_NOT_EXIST_ERROR(30005, "文章不存在"),
-    CATEGORY_ALREADY_EXIT(30006, "分类不存在");
+    CATEGORY_ALREADY_EXIT_ERROR(30006, "分类已存在"),
+    CATEGORY_NOT_EXIT_ERROR(30007, "分类不存在");
 
 
     private int code;

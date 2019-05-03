@@ -14,7 +14,11 @@ public interface CategoryEntityMapper {
 
     CategoryEntity selectByName(@Param("name") String name);
 
+    CategoryEntity selectById(@Param("id") Integer id);
+
     void updateNumByName(@Param("name") String name, @Param("num") Integer num);
+
+    void updateByIdSelective(CategoryEntity entity);
 
     List<CategoryEntity> selectAllCategories();
 }

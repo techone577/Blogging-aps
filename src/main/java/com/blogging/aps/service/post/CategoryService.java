@@ -36,7 +36,15 @@ public class CategoryService {
         categoryEntityMapper.updateNumByName(name, num);
     }
 
-    public List<CategoryEntity> queryCategories(){
+    public void updateByIdSelecttive(CategoryEntity entity) {
+        categoryEntityMapper.updateByIdSelective(entity);
+    }
+
+    public List<CategoryEntity> queryCategories() {
         return categoryEntityMapper.selectAllCategories();
+    }
+
+    public CategoryEntity queryById(Integer id) {
+        return categoryEntityMapper.selectById(id);
     }
 }

@@ -4,6 +4,7 @@ import com.blogging.aps.business.BMBusiness;
 import com.blogging.aps.business.PostBusiness;
 import com.blogging.aps.business.manage.AbstractPostListQueryBusiness;
 import com.blogging.aps.model.dto.*;
+import com.blogging.aps.model.dto.BM.BMCategoryModifyDTO;
 import com.blogging.aps.model.entity.Response;
 import com.blogging.aps.model.dto.BMPostAddDTO;
 import com.blogging.aps.support.annotation.Json;
@@ -16,6 +17,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * @author techoneduan
@@ -198,9 +201,9 @@ public class BackManagementController {
     @RequestMapping(value = "/postAdd", method = RequestMethod.POST)
     @ServiceInfo(name = "Blogging.APS.BMController.postAdd", description = "文章新增")
     public Response postAdd(@Json BMPostAddDTO entity) {
-        LOG.info("新增文章入参：{}", JsonUtil.toString(entity));
+        LOG.info("（BM）新增文章入参：{}", JsonUtil.toString(entity));
         Response response = postBusiness.addPost(entity);
-        LOG.info("新增文章出参：{}", JsonUtil.toString(response));
+        LOG.info("（BM）新增文章出参：{}", JsonUtil.toString(response));
         return response;
     }
 
@@ -210,9 +213,9 @@ public class BackManagementController {
     @RequestMapping(value = "/postUpdate", method = RequestMethod.POST)
     @ServiceInfo(name = "Blogging.APS.BMController.postUpdate", description = "文章更新")
     public Response postUpdate(@Json BMPostUpdateDTO updateDTO) {
-        LOG.info("更新文章入参：{}", JsonUtil.toString(updateDTO));
+        LOG.info("（BM）更新文章入参：{}", JsonUtil.toString(updateDTO));
         Response response = bmBusiness.postUpdate(updateDTO);
-        LOG.info("更新文章出参：{}", JsonUtil.toString(response));
+        LOG.info("（BM）更新文章出参：{}", JsonUtil.toString(response));
         return response;
     }
 
@@ -222,9 +225,9 @@ public class BackManagementController {
     @RequestMapping(value = "/postDelete", method = RequestMethod.POST)
     @ServiceInfo(name = "Blogging.APS.BMController.postDelete", description = "文章删除")
     public Response postDelete(@Json BMPostModifyReqDTO reqDTO) {
-        LOG.info("删除文章入参：{}", JsonUtil.toString(reqDTO));
+        LOG.info("（BM）删除文章入参：{}", JsonUtil.toString(reqDTO));
         Response response = bmBusiness.postDelete(reqDTO);
-        LOG.info("删除文章出参：{}", JsonUtil.toString(response));
+        LOG.info("（BM）删除文章出参：{}", JsonUtil.toString(response));
         return response;
     }
 
@@ -234,27 +237,57 @@ public class BackManagementController {
     @RequestMapping(value = "/tagDelete", method = RequestMethod.POST)
     @ServiceInfo(name = "Blogging.APS.BMController.tagDelete", description = "标签删除")
     public Response tagDelete(@Json BMTagDelReqDTO reqDTO) {
-        LOG.info("删除文章入参：{}", JsonUtil.toString(reqDTO));
+        LOG.info("（BM）删除标签入参：{}", JsonUtil.toString(reqDTO));
         Response response = bmBusiness.deleteTag(reqDTO);
-        LOG.info("删除文章出参：{}", JsonUtil.toString(response));
+        LOG.info("（BM）删除标签出参：{}", JsonUtil.toString(response));
         return response;
     }
 
+    /**
+     * 添加分类
+     */
     @RequestMapping(value = "/addCategory", method = RequestMethod.POST)
     @ServiceInfo(name = "Blogging.APS.BMController.addCategory", description = "添加分类")
     public Response addCategory(@Json BMCategoryAddDTO addDTO) {
-        LOG.info("添加分类入参：{}", JsonUtil.toString(addDTO));
+        LOG.info("（BM）添加分类入参：{}", JsonUtil.toString(addDTO));
         Response response = bmBusiness.addCategory(addDTO);
-        LOG.info("添加分类出参：{}", JsonUtil.toString(response));
+        LOG.info("（BM）添加分类出参：{}", JsonUtil.toString(response));
         return response;
     }
 
+    /**
+     * 查询所有分类
+     */
     @RequestMapping(value = "/queryCategory", method = RequestMethod.POST)
     @ServiceInfo(name = "Blogging.APS.BMController.queryCategory", description = "查询分类")
     public Response queryCategory() {
-        LOG.info("查询分类");
+        LOG.info("（BM）查询分类");
         Response response = bmBusiness.queryCategory();
-        LOG.info("查询分类出参：{}", JsonUtil.toString(response));
+        LOG.info("（BM）查询分类出参：{}", JsonUtil.toString(response));
+        return response;
+    }
+
+    /**
+     * 修改分类信息
+     */
+    @RequestMapping(value = "/modifyCategory", method = RequestMethod.POST)
+    @ServiceInfo(name = "Blogging.APS.BMController.modifyCategory", description = "修改分类信息")
+    public Response modifyCategory(@Json BMCategoryModifyDTO dto, HttpServletRequest request) {
+        LOG.info("（BM）修改分类信息入参：{}", JsonUtil.toString(dto));
+        Response response = bmBusiness.modifyCategory(dto, request);
+        LOG.info("（BM）修改分类信息出参：{}", JsonUtil.toString(response));
+        return response;
+    }
+
+    /**
+     * 查询分类下拉信息
+     */
+    @RequestMapping(value = "/queryCategoriesSelect", method = RequestMethod.POST)
+    @ServiceInfo(name = "Blogging.APS.BMController.queryCategoryNames", description = "查询分类下拉信息")
+    public Response queryCategoriesSelect() {
+        LOG.info("（BM）查询分类下拉信息!");
+        Response response = bmBusiness.queryCategoriesSelect();
+        LOG.info("（BM）查询分类下拉信息出参：{}", JsonUtil.toString(response));
         return response;
     }
 

@@ -20,7 +20,11 @@ public class HomePagePostListDTO {
 
     private StatisticInfo statisticInfo;
 
+    private String category;
+
     private String firstImgUrl;
+
+    private String memberId;
 
     public String getPostId() {
         return postId;
@@ -86,11 +90,27 @@ public class HomePagePostListDTO {
         this.statisticInfo = statisticInfo;
     }
 
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
+    }
+
     public String getFirstImgUrl() {
         return firstImgUrl;
     }
 
     public void setFirstImgUrl(String firstImgUrl) {
         this.firstImgUrl = firstImgUrl;
+    }
+
+    public String getMemberId() {
+        return memberId;
+    }
+
+    public void setMemberId(String memberId) {
+        this.memberId = memberId;
     }
 }

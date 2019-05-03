@@ -6,6 +6,8 @@ public class HomePageRespDTO {
 
     private List<TagInfoDTO> tagInfoList;
 
+    private List<CategoryInfo> categoryInfoList;
+
     private List<HomePagePostListDTO> homePagePostList;
 
     public List<TagInfoDTO> getTagInfoList() {
@@ -14,6 +16,14 @@ public class HomePageRespDTO {
 
     public void setTagInfoList(List<TagInfoDTO> tagInfoList) {
         this.tagInfoList = tagInfoList;
+    }
+
+    public List<CategoryInfo> getCategoryInfoList() {
+        return categoryInfoList;
+    }
+
+    public void setCategoryInfoList(List<CategoryInfo> categoryInfoList) {
+        this.categoryInfoList = categoryInfoList;
     }
 
     public List<HomePagePostListDTO> getHomePagePostList() {

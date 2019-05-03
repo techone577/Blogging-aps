@@ -11,9 +11,11 @@
     <result column="update_time" property="updateTime" />
     <result column="del_flag" property="delFlag" />
   </resultMap>
+
   <sql id="Base_Column_List">
     id, name, cover_url, summary, post_num, add_time, update_time, del_flag
   </sql>
+
   <insert id="insert" parameterType="com.blogging.aps.model.entity.post.CategoryEntity" >
     insert into category (id, name, cover_url, 
       summary, post_num, add_time, 
@@ -22,6 +24,7 @@
       #{summary}, #{postNum}, #{addTime}, 
       #{updateTime}, #{delFlag})
   </insert>
+
   <insert id="insertSelective" parameterType="com.blogging.aps.model.entity.post.CategoryEntity" >
     insert into category
     <trim prefix="(" suffix=")" suffixOverrides="," >
@@ -77,6 +80,7 @@
       </if>
     </trim>
   </insert>
+
   <select id="selectByName" resultMap="BaseResultMap">
     SELECT
     <include refid="Base_Column_List"/>
@@ -84,15 +88,53 @@
     WHERE
     name = #{name}
   </select>
+
+  <select id="selectById" resultMap="BaseResultMap">
+    SELECT
+    <include refid="Base_Column_List"/>
+    FROM category
+    WHERE
+    id = #{id}
+  </select>
+
   <select id="selectAllCategories" resultMap="BaseResultMap">
     SELECT
     <include refid="Base_Column_List"/>
     FROM category
   </select>
+
   <update id="updateNumByName">
     UPDATE category
     SET post_num = #{num}
     WHERE
     name = #{name}
+  </update>
+
+  <update id="updateByIdSelective" parameterType="com.blogging.aps.model.entity.post.CategoryEntity" >
+    update category
+    <set >
+      <if test="name != null" >
+        name = #{name},
+      </if>
+      <if test="coverUrl != null" >
+        cover_url = #{coverUrl},
+      </if>
+      <if test="summary != null" >
+        summary = #{summary},
+      </if>
+      <if test="postNum != null" >
+        post_num = #{postNum},
+      </if>
+      <if test="addTime != null" >
+        add_time = #{addTime},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime},
+      </if>
+      <if test="delFlag != null" >
+        del_flag = #{delFlag},
+      </if>
+    </set>
+    where id = #{id}
   </update>
 </mapper>
