@@ -161,7 +161,7 @@ public class PostBusiness {
     public Response queryBlog(PostQueryReqDTO reqDTO) {
         PostInfoEntity postInfoEntity = postService.queryPostByPostId(reqDTO.getPostId(), 1);
         if (null == postInfoEntity)
-            throw new UnifiedException(ErrorCodeEnum.POST_NOT_EXIST_ERROR);
+            throw new UnifiedException(ErrorCodeEnum.FOUR_ZERO_FOUR_ERROR,"文章不存在");
         PassageEntity passageEntity = postService.queryPassageByPassageId(postInfoEntity.getPassageId());
         String htmlContent = MarkDownUtils.markDownToHtml(passageEntity.getContent());
 
