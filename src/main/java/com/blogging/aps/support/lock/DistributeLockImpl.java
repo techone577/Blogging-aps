@@ -22,7 +22,7 @@ public class DistributeLockImpl implements DistributeLock {
     private static final int DEAD_LOCK_REMOVE_SECONDS = DEAD_LOCK_EXPIRED_SECONDS + 60; //
 
     @Autowired
-    private RedisTemplate<String, Long> redisTemplate;
+    private RedisTemplate redisTemplate;
 
     @Override
     public boolean tryLock(String lockKey) {

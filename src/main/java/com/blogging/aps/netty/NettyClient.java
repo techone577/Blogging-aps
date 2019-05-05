@@ -1,5 +1,6 @@
 package com.blogging.aps.netty;
 
+import com.blogging.aps.support.spring.ApplicationContextCache;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
@@ -19,8 +20,8 @@ import io.netty.handler.codec.string.StringDecoder;
  */
 public class NettyClient {
 
-    private static final String host = "127.0.0.1";
-    private static final Integer port = 1002;
+    private static final String host = ApplicationContextCache.getPropertiesHolder().getNettyIp();
+    private static final Integer port = ApplicationContextCache.getPropertiesHolder().getNettyPort();
 
     private static EventLoopGroup group = null;
     private static Bootstrap client = null;

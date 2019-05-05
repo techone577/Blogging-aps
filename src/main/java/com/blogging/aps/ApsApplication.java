@@ -23,7 +23,7 @@ public class ApsApplication {
         try {
             NettyClient.connect();
         } catch (Exception e) {
-            LOG.info("连接netty服务器失败...");
+            LOG.info("连接netty服务器失败...",e);
         }
         LOG.info("netty启动结束...");
     }

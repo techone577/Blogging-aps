@@ -18,11 +18,25 @@ public class PropertiesHolder {
     @Value("${spring.application.name}")
     private String appName;
 
+    @Value("${netty.server.ip}")
+    private String nettyIp;
+
+    @Value("${netty.server.port}")
+    private Integer nettyPort;
+
     public Integer getPort () {
         return port;
     }
 
     public String getName () {
         return appName;
+    }
+
+    public String getNettyIp() {
+        return nettyIp;
+    }
+
+    public Integer getNettyPort() {
+        return nettyPort;
     }
 }
