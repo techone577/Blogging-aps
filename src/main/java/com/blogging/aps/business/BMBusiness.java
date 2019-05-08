@@ -358,9 +358,11 @@ public class BMBusiness {
         if (StringUtils.isBlank(reqDTO.getPostId()) || StringUtils.isBlank(reqDTO.getTagName()))
             throw new UnifiedException(ErrorCodeEnum.PARAM_ILLEGAL_ERROR);
         List<String> tags = postBusiness.getPostTags(reqDTO.getPostId());
-        Optional optional = tags.stream().filter(i -> i.equals(reqDTO.getTagName())).findAny();
-        if (optional.isPresent())
-            throw new UnifiedException(ErrorCodeEnum.TAG_ALREADY_EXIST_ERROR);
+        if (null != tags && tags.size() > 0) {
+            Optional optional = tags.stream().filter(i -> i.equals(reqDTO.getTagName())).findAny();
+            if (optional.isPresent())
+                throw new UnifiedException(ErrorCodeEnum.TAG_ALREADY_EXIST_ERROR);
+        }
         addTag(reqDTO.getTagName(), reqDTO.getPostId());
         return ResponseBuilder.build(true, "添加成功");
     }
@@ -628,7 +630,7 @@ public class BMBusiness {
         if (!entity.getCoverUrl().equals(newEntity.getCoverUrl())) {
             //删除老封面
             String name = entity.getCoverUrl().split("\\?")[1].split("=")[1];
-            String path = "WEB-INF/image/cover/" + name;
+            String path = "/cover/" + name;
             File file = new File(request.getServletContext().getRealPath(path));
             if (!file.delete())
                 LOG.info("封面删除失败:{}", name);

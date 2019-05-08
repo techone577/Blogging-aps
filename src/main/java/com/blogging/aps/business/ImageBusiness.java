@@ -52,6 +52,10 @@ public class ImageBusiness {
         MultipartFile file = Base64Util.base64ToMultipart(imString, originalName);
         String path = request.getServletContext().getRealPath(vPath);
         File targetFile = new File(path, file.getName());
+        File dir = new File(path);
+        if (!dir.exists()) {
+            dir.mkdir();
+        }
         //保存
         file.transferTo(targetFile);
         resp.put("success", 1);
